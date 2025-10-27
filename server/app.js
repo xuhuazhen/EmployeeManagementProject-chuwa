@@ -11,7 +11,7 @@ import { fileURLToPath } from "url";
 import { AppError } from "./utils/appError.js"; 
 
 import userRouter from './routers/userRouter.js';
-// import hrRouter from './routers/hrRouter.js';
+import hrRouter from './routers/hrRouter.js';
 // import applicationRouter from './routers/applicationRouter.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -59,7 +59,7 @@ app.get("/", (req, res) => {
 
 // 路由（注意这里仅写“路径片段”，不要写完整 URL）
 app.use("/api/empolyee", userRouter); 
-// app.use("/api/hr", hrRouter);
+app.use("/api/hr", hrRouter);
 // app.use('/api/application', applicationRouter);
 
 // 404
