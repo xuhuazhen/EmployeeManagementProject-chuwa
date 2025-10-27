@@ -14,3 +14,37 @@
   background-color: rgb(68, 114, 202, 85%);
   color: #fff;
 }
+
+.button {
+  height: auto;
+  width: auto;
+  border-radius: 6px;
+  background-color: #4472ca;
+  color: #fff;
+  cursor: pointer;
+  padding: 9px 45px;
+  border: 1px solid #4472ca;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+:global(.ant-btn-variant-outlined):not(:disabled):not(.ant-btn-disabled):hover {
+  border-color: rgba(68, 114, 202, 0.85);
+  background-color: rgba(68, 114, 202, 0.85);
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .button {
+    padding: 8px 30px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .button {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 14px;
+  }
+}

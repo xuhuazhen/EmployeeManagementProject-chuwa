@@ -3,10 +3,42 @@
   align-items: center;
   background-color: #4472ca;
   justify-content: space-between;
+  width: 100%;
+  height: auto !important;
 }
 
 .logo {
   color: #fff;
   font-size: 24px;
   font-weight: 600;
+}
+
+.logo span {
+  font-size: 12px;
+}
+
+.topRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+}
+
+.menuToggle {
+  display: none;
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .header {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .menuToggle {
+    display: block;
+  }
 }
