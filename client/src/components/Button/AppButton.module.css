@@ -1,0 +1,16 @@
+.button {
+  height: auto;
+  width: auto;
+  border-radius: 6px;
+  background-color: #4472ca;
+  color: #fff;
+  cursor: pointer;
+  padding: 9px 45px;
+  border: 1px solid #4472ca;
+}
+
+:global(.ant-btn-variant-outlined):not(:disabled):not(.ant-btn-disabled):hover {
+  border-color: rgb(68, 114, 202, 85%);
+  background-color: rgb(68, 114, 202, 85%);
+  color: #fff;
+}
