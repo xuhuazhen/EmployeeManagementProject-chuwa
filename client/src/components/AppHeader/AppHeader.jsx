@@ -43,7 +43,7 @@ const AppHeader = () => {
         <Link>Home</Link>
         <Link>Visa</Link>
         <Link>Profile</Link>
-        <AppButton>Logout</AppButton>
+        <AppButton className={styles.button}>Logout</AppButton>
       </Navbar> */}
 
       {/* isLogging as HR? */}
@@ -52,7 +52,7 @@ const AppHeader = () => {
         <Link>Visa</Link>
         <Link>Profile</Link>
         <Link>Hiring</Link>
-        <AppButton>Logout</AppButton>
+        <AppButton className={styles.button}>Logout</AppButton>
       </Navbar>
     </Header>
   );

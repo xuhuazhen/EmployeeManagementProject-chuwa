@@ -11,7 +11,10 @@
   },
   "dependencies": {
     "antd": "^5.27.6",
+<<<<<<< HEAD
     "axios": "^1.13.0",
+=======
+>>>>>>> 75ec155 (creating button, navbar,  header and footer reusable components)
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },

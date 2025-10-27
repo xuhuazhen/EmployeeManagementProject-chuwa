@@ -1,3 +1,7 @@
 server/.env
 node_modules/
+<<<<<<< HEAD
 .env
+=======
+.env
+>>>>>>> 75ec155 (creating button, navbar,  header and footer reusable components)

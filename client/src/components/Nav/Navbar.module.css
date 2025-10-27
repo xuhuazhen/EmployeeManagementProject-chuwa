@@ -2,10 +2,15 @@
   display: flex;
   align-items: center;
   gap: 30px;
+<<<<<<< HEAD
   transition: max-height 0.3s ease, opacity 0.3s ease;
 }
 
 /* Links */
+=======
+}
+
+>>>>>>> 75ec155 (creating button, navbar,  header and footer reusable components)
 .navBar :global(a) {
   color: #fff;
   text-decoration: none;
@@ -13,14 +18,20 @@
   font-size: 16px;
 }
 
+<<<<<<< HEAD
 /* Buttons */
+=======
+>>>>>>> 75ec155 (creating button, navbar,  header and footer reusable components)
 .navBar :global(button) {
   border: 1px solid #4472ca;
   background-color: #fff;
   color: #4472ca;
 }
 
+<<<<<<< HEAD
 /* Button hover */
+=======
+>>>>>>> 75ec155 (creating button, navbar,  header and footer reusable components)
 .navBar
   :global(.ant-btn-variant-outlined):not(:disabled):not(
     .ant-btn-disabled
@@ -29,6 +40,7 @@
   background-color: #4472ca;
   color: #fff;
 }
+<<<<<<< HEAD
 
 @media (max-width: 768px) {
   .navBar {
@@ -54,3 +66,5 @@
     padding: 10px 15px;
   }
 }
+=======
+>>>>>>> 75ec155 (creating button, navbar,  header and footer reusable components)
