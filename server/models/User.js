@@ -91,21 +91,7 @@ const DocumentSchema = new Schema(
   { versionKey: false }
 );
 
-UserSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
-  this.password = await argon2.hash(this.password);
-  next();
-});
-
-UserSchema.methods.correctPassword = async function (
-  userPassword,
-  candidatePassword
-) {
-  return await argon2.verify(userPassword, candidatePassword);
-};
-
-
-const UserSchema = new Schema(
+export const UserSchema = new Schema(
   {
     username: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true, lowercase: true },
@@ -151,6 +137,18 @@ const UserSchema = new Schema(
   }, 
 );
 
+UserSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  this.password = await argon2.hash(this.password);
+  next();
+});
+
+UserSchema.methods.correctPassword = async function (
+  userPassword,
+  candidatePassword
+) {
+  return await argon2.verify(userPassword, candidatePassword);
+};
 
 export const User = mongoose.model('User', UserSchema, 'user'); 
 export const Document = mongoose.model('Document', DocumentSchema, 'document');
