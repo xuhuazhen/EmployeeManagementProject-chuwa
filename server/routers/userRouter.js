@@ -1,6 +1,4 @@
 import express from "express";
-import { get_profile } from "../controllers/userController.js";
-import express from "express";
 import {
   get_login,
   post_login,
