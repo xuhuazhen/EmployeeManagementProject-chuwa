@@ -91,54 +91,52 @@ const DocumentSchema = new Schema(
   { versionKey: false }
 );
 
-export const UserSchema = new Schema(
-  {
-    username: { type: String, required: true, unique: true },
-    email: { type: String, required: true, unique: true, lowercase: true },
-    password: {
-      type: String,
-      required: true,
-      select: false,
-    },
-    role: {
-      type: String,
-      enum: ['employee', 'hr'],
-      default: 'employee',
-      required: true,
-    },
-    nextStep: {
-      type: String,
-      enum: [
-        'application-waiting',
-        'application-pending',
-        'application-reject',
-        'ead-waiting',
-        'ead-pending',
-        'ead-reject',
-        'i20-waiting',
-        'i20-pending',
-        'i20-reject',
-        'i983-waiting',
-        'i983-pending',
-        'i983-reject',
-        'all-done',
-      ],
-      default: 'application-waiting',
-      required: true,
-    },
-    personalInfo: PersonalInfoSchema,
-    address: AddressSchema,
-    contactInfo: ContactInfoSchema,
-    employment: EmploymentSchema,
-    reference: ContactsSchema,
-    emergencyContact: [ContactsSchema], 
-    application: { type: ApplicationSchema, default: () => ({}) },
-    documents: [{ type: Schema.Types.ObjectId, ref: 'Document' }],
-  }, 
-);
+export const UserSchema = new Schema({
+  username: { type: String, required: true, unique: true },
+  email: { type: String, required: true, unique: true, lowercase: true },
+  password: {
+    type: String,
+    required: true,
+    select: false,
+  },
+  role: {
+    type: String,
+    enum: ["employee", "hr"],
+    default: "employee",
+    required: true,
+  },
+  nextStep: {
+    type: String,
+    enum: [
+      "application-waiting",
+      "application-pending",
+      "application-reject",
+      "ead-waiting",
+      "ead-pending",
+      "ead-reject",
+      "i20-waiting",
+      "i20-pending",
+      "i20-reject",
+      "i983-waiting",
+      "i983-pending",
+      "i983-reject",
+      "all-done",
+    ],
+    default: "application-waiting",
+    required: true,
+  },
+  personalInfo: PersonalInfoSchema,
+  address: AddressSchema,
+  contactInfo: ContactInfoSchema,
+  employment: EmploymentSchema,
+  reference: ContactsSchema,
+  emergencyContact: [ContactsSchema],
+  application: { type: ApplicationSchema, default: () => ({}) },
+  documents: [{ type: Schema.Types.ObjectId, ref: "Document" }],
+});
 
-UserSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+UserSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
   this.password = await argon2.hash(this.password);
   next();
 });
@@ -150,10 +148,5 @@ UserSchema.methods.correctPassword = async function (
   return await argon2.verify(userPassword, candidatePassword);
 };
 
-<<<<<<< HEAD
 export const User = mongoose.model("User", UserSchema, "user");
 export const Document = mongoose.model("Document", DocumentSchema, "document");
-=======
-export const User = mongoose.model('User', UserSchema, 'user'); 
-export const Document = mongoose.model('Document', DocumentSchema, 'document');
->>>>>>> 2f479e3 (send email, signup/login api)
