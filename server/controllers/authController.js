@@ -33,7 +33,6 @@ export const post_signup = catchAsync(async (req, res, next) => {
 
   // Remove password from output
   newUser.password = undefined;
-  newUser.housing = housing;
 
   res.status(201).json({
     status: 'success',
@@ -44,24 +43,24 @@ export const post_signup = catchAsync(async (req, res, next) => {
 });
 
 export const post_login = catchAsync(async (req, res, next) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
-  if (!email || !password) {
-    return next(new AppError('Please provide email and password!', 400));
+  if (!username || !password) {
+    return next(new AppError('Please provide username and password!', 400));
   }
   let user = null;
 
-  user = await User.findOne({ email })
+  user = await User.findOne({ username })
     .populate('documents')
     .select('+password');
 
   if (!user) {
-    return next(new AppError('Incorrect email', 401));
+    return next(new AppError('Incorrect username', 401));
   }
   
   const isPwdCorrect = await user.correctPassword(user.password, password);
   if (!user || !isPwdCorrect) {
-    return next(new AppError('Incorrect email or password', 401));
+    return next(new AppError('Incorrect username or password', 401));
   }
 
   const token = generateToken(user._id, user.username, user.role);
@@ -109,7 +108,6 @@ export const get_login = async (req, res, next) => {
         isLogin: true,
         userId: decoded.id,
         role: decoded.role,
-        housingId: currentUser.housing,
         nextStep: currentUser.nextStep,
       });
     } catch (err) {

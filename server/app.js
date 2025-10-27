@@ -62,6 +62,7 @@ app.get("/", (req, res) => {
 
 // 路由（注意这里仅写“路径片段”，不要写完整 URL）
 app.use("/api/employee", userRouter);
+app.use("/api/user", userRouter);
 app.use("/api/hr", hrRouter);
 // app.use('/api/application', applicationRouter);
 
