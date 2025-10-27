@@ -3,7 +3,8 @@ import { User } from '../models/User.js';
 import { AppError } from '../utils/appError.js';
 import catchAsync from '../utils/catchAsync.js';
 import { SignupToken } from '../models/SignupToken.js';
-import jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken'; 
+
 
 export const get_signup = (req, res, next) => {
   const signupToken = req.params.signupToken;
@@ -44,7 +45,7 @@ export const post_signup = catchAsync(async (req, res, next) => {
 
 export const post_login = catchAsync(async (req, res, next) => {
   const { username, password } = req.body;
-
+ 
   if (!username || !password) {
     return next(new AppError('Please provide username and password!', 400));
   }
