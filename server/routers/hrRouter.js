@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  get_allProfiles,
   post_sendEmail,
   get_allProfiles,
 } from "../controllers/hrController.js";

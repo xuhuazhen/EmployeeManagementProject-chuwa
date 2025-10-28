@@ -1165,7 +1165,7 @@ HR get all user info, restrict to hr role
 
 ## APPLICATION 又叫ONBOARDING
 
-### **PUT api/application/:userId**
+### **PUT api/onboarding/:userId**
 
 HR change application status, restrict to hr role
 
