@@ -1,0 +1,51 @@
+.authPage {
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+  background-color: #f7f8fa;
+  margin: 10vh 0;
+}
+
+.card {
+  width: 80vw;
+  min-width: 300px;
+  max-width: 600px;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cardHeader {
+  display: flex;
+  flex-direction: column;
+}
+
+.cardHeaderButton {
+  margin-left: auto;
+}
+
+.cardHeaderTitle {
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.emailSentContent {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  row-gap: 10px;
+}
+
+.loginFooter {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.readonlyInput input[readonly] {
+  background-color: #fff; /* 背景白色 */
+  color: #000; /* 文字黑色 */ 
+  pointer-events: none;
+}
+
