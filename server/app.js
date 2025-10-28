@@ -1,19 +1,16 @@
-// server/app.js
+// Server/app.js
 import dotenv from "dotenv";
 dotenv.config();
 
-import express from 'express';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import path from "path";
+import { fileURLToPath } from "url";
 
-import { AppError } from './utils/appError.js';
-import globalErrorHandler from './controllers/errController.js';
+import { AppError } from "./utils/appError.js"; 
 
 import userRouter from './routers/userRouter.js';
-import onboardingRouter from './routers/onboardingRouter.js'; // 新增
-import filesRouter from './routers/files.js';                 // 新增
 import hrRouter from './routers/hrRouter.js';
 // import applicationRouter from './routers/applicationRouter.js';
 
@@ -28,14 +25,14 @@ app.use((req, res, next) => {
   next();
 });
 
-// CORS（交给 cors 统一处理预检）
+// ---- CORS（注意：不要再写 app.options("*") 了）----
 const corsOptions = {
-  origin: 'http://localhost:5173',
+  origin: "http://localhost:5173",
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 };
-app.use(cors(corsOptions)); 
+app.use(cors(corsOptions));
 
 // 兼容 express v5：手动处理 OPTIONS 预检
 app.use((req, res, next) => {
@@ -49,30 +46,28 @@ app.use((req, res, next) => {
   next();
 });
 
-// 解析 body & cookie
+// 解析 body & 静态资源
 app.use(cookieParser());
-app.use(express.json({ limit: '2mb' }));
+app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: true }));
 
-// 静态资源（可选）
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 
-/* ---------- 健康检查 ---------- */
-app.get('/health', (_req, res) => res.json({ ok: true }));
-
-/* ---------- 路由挂载 ---------- */
-app.use('/api/user', userRouter);
-app.use('/api/onboarding', onboardingRouter); // 新增
-app.use('/api/files', filesRouter);           // 新增
-app.use('/api/hr', hrRouter);
-// app.use('/api/application', applicationRouter);
-
-/* ---------- 404 处理 ---------- */
-app.all('*', (req, _res, next) => {
-  next(new AppError(`Route not found: ${req.method} ${req.originalUrl}`, 404));
+app.get("/", (req, res) => {
+  res.json("Hello");
 });
 
-/* ---------- 全局错误处理（最后一个中间件） ---------- */
-app.use(globalErrorHandler);
+// 路由（注意这里仅写“路径片段”，不要写完整 URL）
+app.use("/api/user", userRouter); 
+app.use("/api/hr", hrRouter);
+// app.use('/api/application', applicationRouter);
+
+// 404
+app.use((req, res, next) => {
+  next(new AppError("Sorry, we couldn’t find the page you’re looking for.", 404));
+});
+
+// 统一错误处理（务必是最后一个）
+// app.use(errController);
 
 export default app;
