@@ -1,19 +1,6 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 // Server/app.js
 import dotenv from "dotenv";
 dotenv.config();
-=======
-// server/app.js
-import dotenv from "dotenv";
-dotenv.config();
-
-import express from 'express';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
-import path from 'path';
-import { fileURLToPath } from 'url';
->>>>>>> 443e675 (merge)
 
 import express from "express";
 import cors from "cors";
@@ -22,26 +9,12 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 import { AppError } from "./utils/appError.js";
+import globalErrorHandler from "./controllers/errController.js";
 
 import userRouter from "./routers/userRouter.js";
 import hrRouter from "./routers/hrRouter.js";
-=======
-// Server/app.js
-import dotenv from "dotenv";
-dotenv.config();
-
-import express from "express";
-import cors from "cors";
-import cookieParser from "cookie-parser";
-import path from "path";
-import { fileURLToPath } from "url";
-
-import { AppError } from "./utils/appError.js"; 
-
-import userRouter from './routers/userRouter.js';
-import hrRouter from './routers/hrRouter.js';
->>>>>>> bb8b26e (Revert "Merge mjw")
-// import applicationRouter from './routers/applicationRouter.js';
+import fileRouter from "./routers/fileRouter.js";
+import onboardingRouter from "./routers/onboardingRouter.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -61,27 +34,23 @@ const corsOptions = {
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 app.use(cors(corsOptions));
-=======
-app.use(cors(corsOptions)); 
-=======
-app.use(cors(corsOptions));
->>>>>>> bb8b26e (Revert "Merge mjw")
 
 // 兼容 express v5：手动处理 OPTIONS 预检
 app.use((req, res, next) => {
   if (req.method === "OPTIONS") {
     res.header("Access-Control-Allow-Origin", corsOptions.origin);
     res.header("Access-Control-Allow-Methods", corsOptions.methods.join(","));
-    res.header("Access-Control-Allow-Headers", corsOptions.allowedHeaders.join(","));
+    res.header(
+      "Access-Control-Allow-Headers",
+      corsOptions.allowedHeaders.join(",")
+    );
     res.header("Access-Control-Allow-Credentials", "true");
     return res.sendStatus(204);
   }
   next();
 });
->>>>>>> 443e675 (merge)
 
 // 兼容 express v5：手动处理 OPTIONS 预检
 app.use((req, res, next) => {
@@ -110,27 +79,19 @@ app.get("/", (req, res) => {
 });
 
 // 路由（注意这里仅写“路径片段”，不要写完整 URL）
-<<<<<<< HEAD
-app.use("/api/employee", userRouter);
 app.use("/api/user", userRouter);
-=======
-app.use("/api/user", userRouter); 
->>>>>>> bb8b26e (Revert "Merge mjw")
 app.use("/api/hr", hrRouter);
-// app.use('/api/application', applicationRouter);
+app.use("api/onboarding", onboardingRouter);
+app.use("/api/file", fileRouter);
 
 // 404
 app.use((req, res, next) => {
-<<<<<<< HEAD
   next(
     new AppError("Sorry, we couldn’t find the page you’re looking for.", 404)
   );
-=======
-  next(new AppError("Sorry, we couldn’t find the page you’re looking for.", 404));
->>>>>>> bb8b26e (Revert "Merge mjw")
 });
 
 // 统一错误处理（务必是最后一个）
-// app.use(errController);
+app.use(globalErrorHandler);
 
 export default app;
