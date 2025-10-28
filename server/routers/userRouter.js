@@ -11,7 +11,7 @@ import { signupUserValidation, loginUserValidation } from '../middleware/userMid
 
 const router = express.Router();
 
-router.route('/profile/:id').get(get_profile);
+router.route("/profile/:id").get(get_profile);
 
 router.get('/signup/:signupToken', get_signup);
 router.post('/signup',signupUserValidation, post_signup);

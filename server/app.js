@@ -41,7 +41,10 @@ app.use((req, res, next) => {
   if (req.method === "OPTIONS") {
     res.header("Access-Control-Allow-Origin", corsOptions.origin);
     res.header("Access-Control-Allow-Methods", corsOptions.methods.join(","));
-    res.header("Access-Control-Allow-Headers", corsOptions.allowedHeaders.join(","));
+    res.header(
+      "Access-Control-Allow-Headers",
+      corsOptions.allowedHeaders.join(",")
+    );
     res.header("Access-Control-Allow-Credentials", "true");
     return res.sendStatus(204);
   }
@@ -67,7 +70,9 @@ app.use('/api/file', fileRouter);
 
 // 404
 app.use((req, res, next) => {
-  next(new AppError("Sorry, we couldn’t find the page you’re looking for.", 404));
+  next(
+    new AppError("Sorry, we couldn’t find the page you’re looking for.", 404)
+  );
 });
 
 // 统一错误处理（务必是最后一个）

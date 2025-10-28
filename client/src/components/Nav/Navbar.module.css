@@ -2,8 +2,10 @@
   display: flex;
   align-items: center;
   gap: 30px;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
 }
 
+/* Links */
 .navBar :global(a) {
   color: #fff;
   text-decoration: none;
@@ -11,12 +13,14 @@
   font-size: 16px;
 }
 
+/* Buttons */
 .navBar :global(button) {
   border: 1px solid #4472ca;
   background-color: #fff;
   color: #4472ca;
 }
 
+/* Button hover */
 .navBar
   :global(.ant-btn-variant-outlined):not(:disabled):not(
     .ant-btn-disabled
@@ -24,4 +28,29 @@
   border: 1px solid #fff;
   background-color: #4472ca;
   color: #fff;
+}
+
+@media (max-width: 768px) {
+  .navBar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    width: 100%;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+  }
+
+  .showMenu {
+    max-height: 500px;
+    opacity: 1;
+    margin-bottom: 20px;
+  }
+
+  .navBar :global(a),
+  .navBar :global(button) {
+    width: 100%;
+    text-align: center;
+    padding: 10px 15px;
+  }
 }
