@@ -8,11 +8,13 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
 
-import { AppError } from "./utils/appError.js"; 
+import { AppError } from "./utils/appError.js";
+import globalErrorHandler from "./controllers/errController.js";
 
-import userRouter from './routers/userRouter.js';
-import hrRouter from './routers/hrRouter.js';
-// import applicationRouter from './routers/applicationRouter.js';
+import userRouter from "./routers/userRouter.js";
+import hrRouter from "./routers/hrRouter.js";
+import fileRouter from "./routers/fileRouter.js";
+import onboardingRouter from "./routers/onboardingRouter.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,7 +41,10 @@ app.use((req, res, next) => {
   if (req.method === "OPTIONS") {
     res.header("Access-Control-Allow-Origin", corsOptions.origin);
     res.header("Access-Control-Allow-Methods", corsOptions.methods.join(","));
-    res.header("Access-Control-Allow-Headers", corsOptions.allowedHeaders.join(","));
+    res.header(
+      "Access-Control-Allow-Headers",
+      corsOptions.allowedHeaders.join(",")
+    );
     res.header("Access-Control-Allow-Credentials", "true");
     return res.sendStatus(204);
   }
@@ -58,13 +63,16 @@ app.get("/", (req, res) => {
 });
 
 // 路由（注意这里仅写“路径片段”，不要写完整 URL）
-app.use("/api/user", userRouter); 
+app.use("/api/user", userRouter);
 app.use("/api/hr", hrRouter);
-// app.use('/api/application', applicationRouter);
+app.use("api/onboarding", onboardingRouter);
+app.use("/api/file", fileRouter);
 
 // 404
 app.use((req, res, next) => {
-  next(new AppError("Sorry, we couldn’t find the page you’re looking for.", 404));
+  next(
+    new AppError("Sorry, we couldn’t find the page you’re looking for.", 404)
+  );
 });
 
 // 统一错误处理（务必是最后一个）

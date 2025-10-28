@@ -5,6 +5,7 @@
   justify-content: space-between;
   width: 100%;
   height: auto !important;
+  line-height: 1;
 }
 
 .logo {
