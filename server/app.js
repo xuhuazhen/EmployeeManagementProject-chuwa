@@ -1,6 +1,18 @@
+<<<<<<< HEAD
 // Server/app.js
 import dotenv from "dotenv";
 dotenv.config();
+=======
+// server/app.js
+import dotenv from "dotenv";
+dotenv.config();
+
+import express from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import path from 'path';
+import { fileURLToPath } from 'url';
+>>>>>>> 443e675 (merge)
 
 import express from "express";
 import cors from "cors";
@@ -32,7 +44,23 @@ const corsOptions = {
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
+<<<<<<< HEAD
 app.use(cors(corsOptions));
+=======
+app.use(cors(corsOptions)); 
+
+// 兼容 express v5：手动处理 OPTIONS 预检
+app.use((req, res, next) => {
+  if (req.method === "OPTIONS") {
+    res.header("Access-Control-Allow-Origin", corsOptions.origin);
+    res.header("Access-Control-Allow-Methods", corsOptions.methods.join(","));
+    res.header("Access-Control-Allow-Headers", corsOptions.allowedHeaders.join(","));
+    res.header("Access-Control-Allow-Credentials", "true");
+    return res.sendStatus(204);
+  }
+  next();
+});
+>>>>>>> 443e675 (merge)
 
 // 兼容 express v5：手动处理 OPTIONS 预检
 app.use((req, res, next) => {
