@@ -1,10 +1,8 @@
-// server/models/User.js
-import mongoose from 'mongoose';
-import argon2 from 'argon2'; // ESM 默认导入
+import mongoose from 'mongoose'; 
+import * as argon2 from 'argon2';
 
-const { Schema } = mongoose;
+const Schema = mongoose.Schema;
 
-/* ---------- 子文档 Schemas ---------- */
 const PersonalInfoSchema = new Schema(
   {
     firstName: String,
@@ -17,7 +15,6 @@ const PersonalInfoSchema = new Schema(
   },
   { _id: false }
 );
-
 const AddressSchema = new Schema(
   {
     address1: String,
@@ -47,17 +44,14 @@ const EmploymentSchema = new Schema(
   { _id: false }
 );
 
-const ContactsSchema = new Schema(
-  {
-    firstName: String,
-    lastName: String,
-    middleName: String,
-    phone: String,
-    email: String,
-    relationship: String,
-  },
-  { _id: false }
-);
+const ContactsSchema = new Schema({
+  firstName: String,
+  lastName: String,
+  middleName: String,
+  phone: String,
+  email: String,
+  relationship: String,
+});
 
 const ApplicationSchema = new Schema(
   {
@@ -97,56 +91,64 @@ const DocumentSchema = new Schema(
   { versionKey: false }
 );
 
-/* ---------- 用户主 Schema（先定义，再挂中间件/方法） ---------- */
-const UserSchema = new Schema(
+export const UserSchema = new Schema(
   {
-    username: { type: String, required: true, unique: true, trim: true },
-    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    password: { type: String, required: true, select: false }, // 取时需要 .select('+password')
-    role: { type: String, enum: ['employee', 'hr'], default: 'employee', required: true },
-
+    username: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true, lowercase: true },
+    password: {
+      type: String,
+      required: true,
+      select: false,
+    },
+    role: {
+      type: String,
+      enum: ['employee', 'hr'],
+      default: 'employee',
+      required: true,
+    },
     nextStep: {
       type: String,
       enum: [
-        'application-waiting', 'application-pending', 'application-reject',
-        'ead-waiting', 'ead-pending', 'ead-reject',
-        'i20-waiting', 'i20-pending', 'i20-reject',
-        'i983-waiting', 'i983-pending', 'i983-reject',
+        'application-waiting',
+        'application-pending',
+        'application-reject',
+        'ead-waiting',
+        'ead-pending',
+        'ead-reject',
+        'i20-waiting',
+        'i20-pending',
+        'i20-reject',
+        'i983-waiting',
+        'i983-pending',
+        'i983-reject',
         'all-done',
       ],
       default: 'application-waiting',
       required: true,
     },
-
     personalInfo: PersonalInfoSchema,
     address: AddressSchema,
     contactInfo: ContactInfoSchema,
     employment: EmploymentSchema,
     reference: ContactsSchema,
-    emergencyContact: [ContactsSchema],
+    emergencyContact: [ContactsSchema], 
     application: { type: ApplicationSchema, default: () => ({}) },
-
-    // 你这里引用了独立的 Document 模型（下面会导出）
     documents: [{ type: Schema.Types.ObjectId, ref: 'Document' }],
-  },
-  { timestamps: true }
+  }, 
 );
 
-/* ---------- Hooks & Methods（必须放在定义之后） ---------- */
-
-// 保存前哈希密码（仅当 password 被修改时）
 UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   this.password = await argon2.hash(this.password);
   next();
 });
 
-// 实例方法：校验明文密码
-UserSchema.methods.correctPassword = function (candidatePassword) {
-  // this.password 为数据库中的 hash（需要查询时显式 select('+password')）
-  return argon2.verify(this.password, candidatePassword);
+UserSchema.methods.correctPassword = async function (
+  userPassword,
+  candidatePassword
+) {
+  return await argon2.verify(userPassword, candidatePassword);
 };
 
-/* ---------- 模型导出 ---------- */
-export const User = mongoose.model('User', UserSchema, 'user');
+export const User = mongoose.model('User', UserSchema, 'user'); 
 export const Document = mongoose.model('Document', DocumentSchema, 'document');

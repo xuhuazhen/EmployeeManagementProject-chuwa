@@ -12,7 +12,7 @@ import globalErrorHandler from './controllers/errController.js';
 import userRouter from './routers/userRouter.js';
 import onboardingRouter from './routers/onboardingRouter.js'; // 新增
 import filesRouter from './routers/files.js';                 // 新增
-// import hrRouter from './routers/hrRouter.js';
+import hrRouter from './routers/hrRouter.js';
 // import applicationRouter from './routers/applicationRouter.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -20,10 +20,8 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-/* ---------- 基础中间件 ---------- */
-
-// 请求日志（便于排查）
-app.use((req, _res, next) => {
+// 打印每个请求，方便排查
+app.use((req, res, next) => {
   console.log(`[REQ] ${req.method} ${req.originalUrl}`);
   next();
 });
@@ -50,10 +48,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
 /* ---------- 路由挂载 ---------- */
-app.use('/api/employee', userRouter);
+app.use('/api/user', userRouter);
 app.use('/api/onboarding', onboardingRouter); // 新增
 app.use('/api/files', filesRouter);           // 新增
-// app.use('/api/hr', hrRouter);
+app.use('/api/hr', hrRouter);
 // app.use('/api/application', applicationRouter);
 
 /* ---------- 404 处理 ---------- */
