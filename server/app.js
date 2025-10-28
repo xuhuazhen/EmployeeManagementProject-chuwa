@@ -76,6 +76,6 @@ app.use((req, res, next) => {
 });
 
 // 统一错误处理（务必是最后一个）
-// app.use(errController);
+app.use(globalErrorHandler);
 
 export default app;
