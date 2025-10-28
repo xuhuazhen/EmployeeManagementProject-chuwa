@@ -1,8 +1,8 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import MainLayout from "./components/mainLayout/mainLayout";
-import { AuthGuardForSignup } from './router/AuthGuard';
-import SignupPage from './pages/Signup';
-import LoginPage from './pages/Login';
+import { AuthGuardForSignup } from "./router/AuthGuard";
+import SignupPage from "./pages/Signup";
+import LoginPage from "./pages/Login";
 
 const App = () => {
   // return <MainLayout />;
@@ -10,21 +10,17 @@ const App = () => {
     <Router>
       <Routes>
         <Route
-          path='/signup/*'
+          path="/signup/*"
           element={
             <AuthGuardForSignup>
               <SignupPage />
             </AuthGuardForSignup>
           }
         />
-        <Route
-          path='/login'
-          element={
-            <LoginPage />
-          }
-        />
+        <Route path="/login" element={<LoginPage />} />
       </Routes>
     </Router>
-)};
+  );
+};
 
 export default App;
