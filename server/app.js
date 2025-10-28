@@ -1,20 +1,21 @@
-// Server/app.js
+// server/app.js
 import dotenv from "dotenv";
 dotenv.config();
 
-import express from "express";
-import cors from "cors";
-import cookieParser from "cookie-parser";
-import path from "path";
-import { fileURLToPath } from "url";
+import express from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-import { AppError } from "./utils/appError.js";
-import globalErrorHandler from "./controllers/errController.js";
+import { AppError } from './utils/appError.js';
+import globalErrorHandler from './controllers/errController.js';
 
-import userRouter from "./routers/userRouter.js";
-import hrRouter from "./routers/hrRouter.js";
-import fileRouter from "./routers/fileRouter.js";
-import onboardingRouter from "./routers/onboardingRouter.js";
+import userRouter from './routers/userRouter.js';
+import onboardingRouter from './routers/onboardingRouter.js'; // 新增
+import filesRouter from './routers/files.js';                 // 新增
+import hrRouter from './routers/hrRouter.js';
+// import applicationRouter from './routers/applicationRouter.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,8 +35,19 @@ const corsOptions = {
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
+app.use(cors(corsOptions)); 
 
-app.use(cors(corsOptions));
+// 兼容 express v5：手动处理 OPTIONS 预检
+app.use((req, res, next) => {
+  if (req.method === "OPTIONS") {
+    res.header("Access-Control-Allow-Origin", corsOptions.origin);
+    res.header("Access-Control-Allow-Methods", corsOptions.methods.join(","));
+    res.header("Access-Control-Allow-Headers", corsOptions.allowedHeaders.join(","));
+    res.header("Access-Control-Allow-Credentials", "true");
+    return res.sendStatus(204);
+  }
+  next();
+});
 
 // 兼容 express v5：手动处理 OPTIONS 预检
 app.use((req, res, next) => {
