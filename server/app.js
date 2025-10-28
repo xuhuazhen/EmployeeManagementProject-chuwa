@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 // Server/app.js
 import dotenv from "dotenv";
 dotenv.config();
@@ -24,6 +25,22 @@ import { AppError } from "./utils/appError.js";
 
 import userRouter from "./routers/userRouter.js";
 import hrRouter from "./routers/hrRouter.js";
+=======
+// Server/app.js
+import dotenv from "dotenv";
+dotenv.config();
+
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import path from "path";
+import { fileURLToPath } from "url";
+
+import { AppError } from "./utils/appError.js"; 
+
+import userRouter from './routers/userRouter.js';
+import hrRouter from './routers/hrRouter.js';
+>>>>>>> bb8b26e (Revert "Merge mjw")
 // import applicationRouter from './routers/applicationRouter.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -45,9 +62,13 @@ const corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 <<<<<<< HEAD
+<<<<<<< HEAD
 app.use(cors(corsOptions));
 =======
 app.use(cors(corsOptions)); 
+=======
+app.use(cors(corsOptions));
+>>>>>>> bb8b26e (Revert "Merge mjw")
 
 // 兼容 express v5：手动处理 OPTIONS 预检
 app.use((req, res, next) => {
@@ -89,16 +110,24 @@ app.get("/", (req, res) => {
 });
 
 // 路由（注意这里仅写“路径片段”，不要写完整 URL）
+<<<<<<< HEAD
 app.use("/api/employee", userRouter);
 app.use("/api/user", userRouter);
+=======
+app.use("/api/user", userRouter); 
+>>>>>>> bb8b26e (Revert "Merge mjw")
 app.use("/api/hr", hrRouter);
 // app.use('/api/application', applicationRouter);
 
 // 404
 app.use((req, res, next) => {
+<<<<<<< HEAD
   next(
     new AppError("Sorry, we couldn’t find the page you’re looking for.", 404)
   );
+=======
+  next(new AppError("Sorry, we couldn’t find the page you’re looking for.", 404));
+>>>>>>> bb8b26e (Revert "Merge mjw")
 });
 
 // 统一错误处理（务必是最后一个）
