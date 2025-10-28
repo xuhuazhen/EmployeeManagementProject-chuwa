@@ -1,0 +1,49 @@
+.profileContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.title {
+  align-self: center;
+}
+
+.total {
+  position: absolute;
+  left: 0;
+}
+
+.total strong {
+  font-size: 16px;
+}
+
+.topBar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.topBar :global(.ant-tabs) {
+  margin: 0;
+  padding: 0;
+}
+
+.topBar :global(.ant-tabs-nav) {
+  margin: 0 !important;
+}
+
+.topBar :global(.ant-tabs-nav-wrap) {
+  align-items: center;
+  display: flex;
+}
+.topBar :global(.ant-tabs-nav::before) {
+  border-bottom: none !important;
+}
+
+.buttonView,
+.buttonSend {
+  font-size: 12px;
+  padding: 6px 12px;
+}

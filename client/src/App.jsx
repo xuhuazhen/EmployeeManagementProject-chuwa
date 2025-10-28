@@ -1,7 +1,7 @@
-import MainLayout from "./components/mainLayout/mainLayout";
+import VisaManagement from "./pages/VisaManagement/VisaManagement";
 
 const App = () => {
-  return <MainLayout />;
+  return <VisaManagement />;
 };
 
 export default App;
