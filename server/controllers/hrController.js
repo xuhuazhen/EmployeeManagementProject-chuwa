@@ -22,6 +22,9 @@ export const get_allProfiles = catchAsync(async (req, res, next) => {
 export const post_sendEmail = catchAsync(async (req, res, next) => {
   const { email, fullName } = req.body;
 
+  if (!email || !fullName) {
+    return next(new AppError('Email and full name are required', 400));
+  }
   //check email exist
   const user = await User.findOne({ email });
   if (user) return next(new AppError('Email already exist in system'));
@@ -60,3 +63,58 @@ export const post_sendEmail = catchAsync(async (req, res, next) => {
 
 export const get_tokenHistory = getAll(SignupToken);
 
+export const post_sendNotificationEmail = catchAsync(async (req, res, next) => {
+  const userId = req.params.userId;
+
+  //TODO: check email exist
+
+  const user = await User.findById(userId)
+    .select('email nextStep personalInfo.firstName personalInfo.lastName')
+    .exec();
+
+  if (!user) {
+    return next(new AppError('No user found by given userId', 404));
+  }
+
+  const type = user.nextStep.split('-')[0];
+  const status = user.nextStep.split('-')[1];
+
+  const fileMapping = {
+    ead: 'Application',
+    i983: 'EAD Document',
+    i20: 'I-983 Document',
+  };
+  let message = '';
+  switch (status) {
+    case 'waiting':
+      message = `Your ${fileMapping[type]} has been approved, please login to your account to submit your ${type} document.`;
+      break;
+    case 'reject':
+      message = `Your ${type} document has been rejected, please login to your account to resubmit your ${type} Document.`;
+      break;
+    case 'pending':
+      message = `Your ${type} document is pending, please wait for hr to approve your document.`;
+      break;
+    default:
+      message = `All the documents you have submitted have been approved and no further steps are required! `;
+  }
+
+  const templateParams = {
+    to: user.email,
+    name: `${user.personalInfo?.firstName || ''} ${
+      user.personalInfo?.lastName || ''
+    }`,
+    message,
+  };
+
+  const send = await sendEmail(templateParams, 'notify', next);
+
+  if (send) {
+    res.status(200).json({
+      status: 'success',
+      message,
+    });
+  } else {
+    return next(new AppError('Failed send Email', 500));
+  }
+});

@@ -6,12 +6,14 @@ import styles from "./AppButton.module.css";
 // };
 // export default AppButton;
 
-const AppButton = ({ children, className = "", ...props }) => {
+const AppButton = ({ children, className = "", handleClick, ...props }) => {
   // Merge the default styles with any custom className passed
   const combinedClassName = `${styles.button} ${className}`.trim();
 
   return (
-    <Button className={combinedClassName} {...props}>
+    <Button className={combinedClassName} 
+      onClick = {handleClick}
+      {...props}>
       {children}
     </Button>
   );

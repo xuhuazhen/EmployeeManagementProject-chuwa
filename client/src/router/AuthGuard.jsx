@@ -1,8 +1,71 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react'; 
 import LoadingSpin from '../components/LoadingSpin/loadingSpin';
 import api from '../api/axiosConfig';
 import SignupPage from '../pages/Signup';
+import { useDispatch, useSelector } from 'react-redux';
+import { useCallback } from 'react';
+
+const AuthGuard = ({ children }) => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const user = useSelector((state) => state.user); 
+  const dispatch = useDispatch();
+
+  const checkLoginStatus = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await api.get('user/login', {
+        withCredentials: true,
+      });
+
+      setIsLoggedIn(response.data.isLogin);
+      
+      if ( !isLoggedIn && 
+         location.pathname !== '/login' && location.pathname !== '/signup' ) {
+            // Redirect unauthenticated users
+            navigate('/login');
+        }
+    } catch (error) {
+      console.error('Authentication check failed:', error);
+      navigate('/login');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [dispatch, navigate, location.pathname]);
+
+  useEffect(() => {
+    checkLoginStatus();
+  }, [checkLoginStatus]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (isLoggedIn) {
+        const nextStep = user.nextStep?.split('-')[0];
+        switch (nextStep) {
+          case 'application':
+            navigate('/application'); //或者/onboarding
+            break;
+          default:
+            if (['/login', '/'].includes(location.pathname)) {
+            //   navigate('/?'); // Default redirect for logged-in users
+            }
+            break;
+        }
+      } else if (location.pathname !== '/signup') {
+        navigate('/login');
+      }
+    }
+  }, [isLoggedIn, isLoading, user.nextStep, location.pathname, navigate]);
+
+  if (isLoading) {
+    return <LoadingSpin />
+  }
+
+  return children;
+};
 
 // url with token sent to employee
 const AuthGuardForSignup = () => {
@@ -46,5 +109,5 @@ const AuthGuardForSignup = () => {
 };
 
 export { 
-    // AuthGuard, 
+    AuthGuard, 
     AuthGuardForSignup };

@@ -3,6 +3,8 @@ import MainLayout from "./components/mainLayout/mainLayout";
 import { AuthGuardForSignup } from './router/AuthGuard';
 import SignupPage from './pages/Signup';
 import LoginPage from './pages/Login';
+import HiringManagementPage from './pages/HiringManagement';
+
 
 const App = () => {
   // return <MainLayout />;
@@ -21,6 +23,12 @@ const App = () => {
           path='/login'
           element={
             <LoginPage />
+          }
+        />
+        <Route 
+          path='/hiringmanagement'
+          element={
+            <HiringManagementPage />
           }
         />
       </Routes>
