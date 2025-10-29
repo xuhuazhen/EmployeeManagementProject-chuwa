@@ -2,6 +2,34 @@
   display: flex;
   align-items: center;
   gap: 30px;
+}
+
+.navBar :global(a) {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.navBar :global(button) {
+  border: 1px solid #4472ca;
+  background-color: #fff;
+  color: #4472ca;
+}
+
+.navBar
+  :global(.ant-btn-variant-outlined):not(:disabled):not(
+    .ant-btn-disabled
+  ):hover {
+  border: 1px solid #fff;
+  background-color: #4472ca;
+  color: #fff;
+}
+
+.navBar {
+  display: flex;
+  align-items: center;
+  gap: 30px;
   transition: max-height 0.3s ease, opacity 0.3s ease;
 }
 

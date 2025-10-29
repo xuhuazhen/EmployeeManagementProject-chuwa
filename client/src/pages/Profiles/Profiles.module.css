@@ -1,0 +1,21 @@
+.profileContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.title {
+  align-self: center;
+}
+
+.total {
+  display: block;
+}
+
+.total strong {
+  font-size: 16px;
+}
+
+.search {
+  max-width: 100%;
+}

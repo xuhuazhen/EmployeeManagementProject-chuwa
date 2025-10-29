@@ -33,11 +33,26 @@ const AppHeader = () => {
           </div>
         )}
       </div>
+      {/* !isLogging? */}
+      {/* <Navbar isOpen={isOpen}>
+        <Link>Home</Link>
+      </Navbar> */}
+
+      {/* isLogging as condidate? */}
+      {/* <Navbar isOpen={isOpen}>
+        <Link>Home</Link>
+        <Link>Visa</Link>
+        <Link>Profile</Link>
+        <AppButton className={styles.button}>Logout</AppButton>
+      </Navbar> */}
+
+      {/* isLogging as HR? */}
       <Navbar isOpen={isOpen}>
         <Link>Home</Link>
         <Link>Visa</Link>
         <Link>Profile</Link>
-        <AppButton>Logout</AppButton>
+        <Link>Hiring</Link>
+        <AppButton className={styles.button}>Logout</AppButton>
       </Navbar>
     </Header>
   );
