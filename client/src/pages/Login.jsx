@@ -2,16 +2,20 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';   
 import { message } from 'antd';  
 import api from '../api/axiosConfig';
-import MainLayout from '../components/mainLayout/mainLayout';
+import { useDispatch } from 'react-redux';
 import { AuthForm } from '../components/AuthForm/authForm';
+import MainLayout from '../components/mainLayout/mainLayout';
+import { storeInfo } from '../slices/employeeSlice';
+import { login } from '../slices/authSlice';
 
 const LoginPage = () => {
     const [loading, setLoading] = useState(false); 
     const navigate = useNavigate(); 
-  
+    const dispatch = useDispatch();
+
     const handleSubmit = async (values) => { 
         setLoading(true);
-
+       
         try {
            const res = await api.post(
                 "user/login",
@@ -20,12 +24,11 @@ const LoginPage = () => {
             );     
 
             if (res.data.status === "success") {
-                const user = res.data.data.user;
-                console.log(user.role);
-
-                //user role can be 'hr' or 'empolyee'
-                // dispatch(storeUser(userInfo));
+                const user = res.data.data.user; 
                 
+                dispatch(login({ userID: user._id, role: user.role }));
+                if (user.role === 'employee')  dispatch(storeInfo(user));
+
                 message.success('Welcome back!');
                 // navigate('/home', { replace: true }); ==> 根据user role和状态判断
             }  
@@ -39,8 +42,8 @@ const LoginPage = () => {
   
     return (
         <MainLayout>
-            <AuthForm 
-                title='Sign in to your account.' 
+            <AuthForm
+                title='Sign in to your accoun' 
                 fields={[
                 {
                     name: 'username',

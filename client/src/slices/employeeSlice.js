@@ -4,15 +4,15 @@ import { createSlice } from '@reduxjs/toolkit';
 const employeeSlice = createSlice({
   name: 'employee',
   initialState: {
-    employee: null, // 员工资料对象
+    employee: [], // 员工资料对象
     loading: false,
     error: null,
   },
   reducers: {
-    updateInfo: (state, payload) => { state.data = payload; },
+    storeInfo: (state, action) => { state.employee = action.payload },
   }
 });
 
 
-export const { updateInfo } = employeeSlice.actions;
+export const { storeInfo } = employeeSlice.actions;
 export default employeeSlice.reducer;

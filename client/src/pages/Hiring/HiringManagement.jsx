@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import AppTable from "../../components/Table/AppTable";
 import MainLayout from "../../components/mainLayout/mainLayout";
@@ -8,6 +8,8 @@ import { formatProfile } from "../../utils/formatProfile";
 import dayjs from "dayjs";
 import DocumentReviewModal from "../../components/Modal/DocumentReviewModal";
 import AppButton from "../../components/Button/AppButton";
+import api from "../../api/axiosConfig";
+import { useCallback } from "react";
 
 const HiringManagement = () => {
   const [profiles, setProfiles] = useState([]);
@@ -33,6 +35,26 @@ const HiringManagement = () => {
     };
 
     fetchProfiles();
+  }, []);
+
+
+  const handleClick = useCallback(async (values) => { 
+    try {
+      const res  = await api.post('hr/signup',
+         values,
+        { withCredentials: true }
+      );
+            
+      if (res.data.status === "success") {
+        message.success('Email send succed!'); 
+      }  
+    } catch (err) {
+      if (err.response && err.response.data.message) {
+        message.error(err.response.data.message);
+      } else {
+        message.error("Unable to send reset link. Please try again later.");
+      }
+    } 
   }, []);
 
   const openPreview = (doc) => {
@@ -200,15 +222,53 @@ const HiringManagement = () => {
     },
   ];
 
-  const RegistrantionToken = () => {
+  const RegistrantionToken = React.memo(({ handleClick }) => {
+    const [email, setEmail] = useState("");
+    const [fullName, setFullName] = useState("");
+
+    const validateInputs = () => {
+      if (!email.trim() || !fullName.trim()) {
+        message.warning("Please fill in both email and name.");
+        return false;
+      }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        message.error("Please enter a valid email address.");
+        return false;
+      }
+      return true;
+    };
+
+    const onSend = () => {
+      if (!validateInputs()) return;
+      handleClick({email, fullName});
+      setEmail("");
+      setFullName("");
+    }
     return (
-      <Flex className={styles.container}>
+      <div className={styles.container}>
         <Text className={styles.label}>Send registration</Text>
-        <Input placeholder="Registration link" className={styles.input} />
-        <AppButton className={styles.button}>Send</AppButton>
-      </Flex>
+        <Input className={styles.input} 
+          placeholder="Enter email..." 
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <Input className={styles.input} 
+          placeholder="Enter full name..." 
+          type="text"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+        />
+        <AppButton 
+          className={styles.button}
+          onClick={onSend}
+        >
+          Send
+        </AppButton>
+      </div>
     );
-  };
+});
 
   return (
     <MainLayout>
@@ -227,7 +287,9 @@ const HiringManagement = () => {
             items={items}
           />
         </Flex>
-        {activeTab === "email history" && <RegistrantionToken />}
+        { activeTab === "email history" && 
+          <RegistrantionToken handleClick={handleClick} />
+        }
         <AppTable columns={columns} data={filteredProfiles} loading={loading} />
       </Flex>
       <DocumentReviewModal
