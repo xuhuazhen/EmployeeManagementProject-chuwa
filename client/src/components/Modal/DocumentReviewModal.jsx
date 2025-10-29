@@ -12,6 +12,7 @@ const DocumentReviewModal = ({
   onApprove,
   onReject,
   onSendFeedback,
+  context,
 }) => {
   const [isRejecting, setIsRejecting] = useState(false);
   const [feedback, setFeedback] = useState("");
@@ -19,26 +20,37 @@ const DocumentReviewModal = ({
   if (!document) return null;
 
   const handleApproveClick = () => {
-    onApprove(document);
+    onApprove?.(document);
     message.success(`${document.title} approved`);
     onClose();
   };
 
-  const handleRejectClick = () => {
-    setIsRejecting(true);
-  };
+  const handleRejectClick = () => setIsRejecting(true);
 
   const handleSendFeedback = () => {
     if (!feedback.trim()) {
       message.warning("Please provide feedback before sending.");
       return;
     }
-    onReject(document, feedback);
+    onReject?.(document, feedback);
     onSendFeedback?.(document, feedback);
     message.info("Feedback sent to employee.");
     setFeedback("");
     setIsRejecting(false);
     onClose();
+  };
+
+  const handleDownload = () => {
+    if (!document?.url) {
+      message.error("No document available to download.");
+      return;
+    }
+
+    const link = document.createElement("a");
+    link.href = document.url;
+    link.download = document.title || "document.pdf";
+    link.target = "_blank";
+    link.click();
   };
 
   return (
@@ -67,26 +79,37 @@ const DocumentReviewModal = ({
         <p>No document available for preview</p>
       )}
 
-      {/* Default state — show Approve / Reject buttons */}
+      {/* Action buttons */}
       {!isRejecting && (
         <Space style={{ display: "flex", justifyContent: "flex-end" }}>
-          <AppButton
-            className={styles.buttonAccept}
-            onClick={handleApproveClick}
-          >
-            Approve
-          </AppButton>
-          <AppButton
-            className={styles.buttonReject}
-            onClick={handleRejectClick}
-          >
-            Reject
-          </AppButton>
+          {/* Show Download button only in the “all” context */}
+          {context === "all" && (
+            <AppButton className={styles.buttonAccept} onClick={handleDownload}>
+              Download
+            </AppButton>
+          )}
+
+          {/* Show Approve/Reject buttons for HR review tabs */}
+          {context === "in progress" && (
+            <>
+              <AppButton
+                className={styles.buttonAccept}
+                onClick={handleApproveClick}
+              >
+                Approve
+              </AppButton>
+              <AppButton
+                className={styles.buttonReject}
+                onClick={handleRejectClick}
+              >
+                Reject
+              </AppButton>
+            </>
+          )}
         </Space>
       )}
 
-      {/* Rejecting state — show feedback input */}
-
+      {/* Rejecting state */}
       {isRejecting && (
         <div style={{ marginTop: 16 }}>
           <TextArea

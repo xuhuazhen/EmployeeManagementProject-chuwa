@@ -2,18 +2,17 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import AppTable from "../../components/Table/AppTable";
 import MainLayout from "../../components/mainLayout/mainLayout";
-import styles from "./VisaManagement.module.css";
-import { Flex, Typography, Tabs, Space, message } from "antd";
+import styles from "./HiringManagement.module.css";
+import { Flex, Typography, Tabs, Space, message, Input } from "antd";
 import { formatProfile } from "../../utils/formatProfile";
 import dayjs from "dayjs";
 import DocumentReviewModal from "../../components/Modal/DocumentReviewModal";
 import AppButton from "../../components/Button/AppButton";
-import SearchBar from "../../components/SearchBar/SearchBar";
 
-const VisaManagement = () => {
+const HiringManagement = () => {
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("in progress");
+  const [activeTab, setActiveTab] = useState("email history");
   const [previewDoc, setPreviewDoc] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -85,7 +84,7 @@ const VisaManagement = () => {
   };
 
   const filteredProfiles =
-    activeTab === "in progress"
+    activeTab === "email history"
       ? profiles
           .filter((p) => p.nextStep !== "all-done") //in progress
           .map((p) => ({
@@ -145,44 +144,25 @@ const VisaManagement = () => {
       key: "nextStep",
     },
     {
-      title: activeTab === "in progress" ? "Action" : "Documents",
+      title: "Action",
       key: "action",
-      render: (_, record) =>
-        activeTab === "in progress" ? (
-          <Space size="middle">
-            {record.documents?.map((doc) => (
-              <AppButton
-                size="small"
-                className={styles.buttonView}
-                key={doc._id}
-                onClick={() => openPreview(doc)}
-              >
-                View
-              </AppButton>
-            ))}
-            <AppButton size="small" className={styles.buttonSend}>
-              Send Notification
+      render: (_, record) => (
+        <Space size="middle">
+          {record.documents?.map((doc) => (
+            <AppButton
+              size="small"
+              className={styles.buttonView}
+              key={doc._id}
+              onClick={() => openPreview(doc)}
+            >
+              View
             </AppButton>
-          </Space>
-        ) : (
-          <Space size="middle">
-            {record.documents?.length > 0 ? ( //Pending documents
-              record.documents.map((doc) => (
-                <a
-                  key={doc._id}
-                  href={doc.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {doc.title}
-                </a>
-              ))
-            ) : (
-              <span>N/A</span>
-            )}
-            <a>Send notification</a>
-          </Space>
-        ),
+          ))}
+          <AppButton size="small" className={styles.buttonSend}>
+            Send Notification
+          </AppButton>
+        </Space>
+      ),
     },
     // {
     //   title: "Action",
@@ -211,14 +191,24 @@ const VisaManagement = () => {
 
   const items = [
     {
-      key: "in progress",
-      label: "In Progress",
+      key: "email history",
+      label: "Email History",
     },
     {
-      key: "all",
-      label: "All",
+      key: "onboarding",
+      label: "Onboarding Applications",
     },
   ];
+
+  const RegistrantionToken = () => {
+    return (
+      <Flex className={styles.container}>
+        <Text className={styles.label}>Send registration</Text>
+        <Input placeholder="Registration link" className={styles.input} />
+        <AppButton className={styles.button}>Send</AppButton>
+      </Flex>
+    );
+  };
 
   return (
     <MainLayout>
@@ -237,7 +227,7 @@ const VisaManagement = () => {
             items={items}
           />
         </Flex>
-        {activeTab === "all" && <SearchBar />}
+        {activeTab === "email history" && <RegistrantionToken />}
         <AppTable columns={columns} data={filteredProfiles} loading={loading} />
       </Flex>
       <DocumentReviewModal
@@ -246,10 +236,8 @@ const VisaManagement = () => {
         onClose={closePreview}
         onApprove={handleApprove}
         onReject={handleReject}
-        context={activeTab}
       />
     </MainLayout>
   );
 };
-
-export default VisaManagement;
+export default HiringManagement;
