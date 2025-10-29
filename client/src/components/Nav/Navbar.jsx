@@ -8,5 +8,4 @@ const Navbar = ({ children, isOpen }) => {
     </Flex>
   );
 };
-
 export default Navbar;

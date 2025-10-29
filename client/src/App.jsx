@@ -1,9 +1,9 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import MainLayout from "./components/mainLayout/mainLayout";
 import { AuthGuardForSignup } from './router/AuthGuard';
 import SignupPage from './pages/Signup';
-import LoginPage from './pages/Login';
-import HiringManagementPage from './pages/HiringManagement';
+import LoginPage from './pages/Login'; 
+import HiringManagement from "./pages/Hiring/HiringManagement";
 
 
 const App = () => {
@@ -28,7 +28,7 @@ const App = () => {
         <Route 
           path='/hiringmanagement'
           element={
-            <HiringManagementPage />
+            <HiringManagement/>
           }
         />
       </Routes>
