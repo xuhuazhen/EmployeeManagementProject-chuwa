@@ -43,12 +43,13 @@ const App = () => {
               <HomePage />
             </Protected>} 
         />
-        {/* <Route path="/onboarding" 
+        <Route path="/onboarding" 
           element={
-            <Protected route="employee">
+            // <Protected route="employee">
               <Onboarding />
-            </Protected>} 
-        /> */}
+            // </Protected>
+          } 
+        />
         {/* <Route path="/personal-info" 
           element={
             <Protected route="employee">
