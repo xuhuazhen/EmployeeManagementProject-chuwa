@@ -274,7 +274,7 @@ const HiringManagement = () => {
     <MainLayout>
       <Flex className={styles.profileContainer}>
         <Title level={4} className={styles.title}>
-          Visa Status Management
+          Hiring Management
         </Title>
         <Flex className={styles.topBar}>
           <Text className={styles.total}>

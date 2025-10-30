@@ -1,0 +1,23 @@
+.container {
+  min-height: 60vh;
+  text-align: center;
+  padding: 20px;
+}
+
+.title {
+  margin-bottom: 30px;
+}
+
+.text {
+  display: block;
+  margin-bottom: 12px;
+}
+
+.feedback {
+  color: red;
+  margin-bottom: 12px;
+}
+
+.downloadButtons {
+  margin: 10px 0;
+}

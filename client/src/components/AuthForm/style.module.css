@@ -1,8 +1,7 @@
 .authPage {
   display: flex;
   justify-content: center;
-  align-items: center; 
-  background-color: #f7f8fa;
+  align-items: center;  
   margin: 10vh 0;
 }
 
