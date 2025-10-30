@@ -66,3 +66,40 @@ export const loginUserValidation = (req, res, next) => {
 
   next();
 };
+
+export const authValidation = catchAsync(async (req, res, next) => {
+  
+  let token;
+  
+  if (req.cookies.token) {
+    token = req.cookies.token;
+  }
+  if (!token) {
+    return next(
+      new AppError('You are not logged in! Please log in to get access.', 401)
+    );
+  } 
+
+  // decode token
+  const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+  const currentUser = await User.findById(decoded.id);
+  if (!currentUser) {
+    return next(
+      new AppError(
+        'The user belonging to this token does no longer exist.',
+        401
+      )
+    );
+  }
+
+  // assign data inside the token to the request body so that we can directly access these data in the request object in the route handler functions
+  req.user = {
+    userId: decoded.id,
+    username: decoded.username,
+    role: decoded.role,
+    nextStep: currentUser.nextStep,
+  };
+
+  next();
+
+});

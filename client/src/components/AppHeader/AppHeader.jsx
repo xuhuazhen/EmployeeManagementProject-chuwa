@@ -13,6 +13,20 @@ const { Header } = Layout;
 const { Text, Link } = Typography;
 const { useBreakpoint } = Grid;
 
+const NAV_ITEMS = {
+  employee: [
+    { label: "Home", path: "/home" },
+    { label: "Visa", path: "/visa-status" },
+    { label: "Profile", path: "/personal-info" },
+  ],
+  hr: [
+    { label: "Home", path: "/hr/home" },
+    { label: "Hiring", path: "/hr/hiring" },
+    { label: "Visa", path: "/hr/visa-management" },
+    { label: "Profiles", path: "/hr/profiles" },
+  ],
+};
+
 const AppHeader = () => {
   const screens = useBreakpoint();
   const isMobile = !screens.md;
@@ -20,6 +34,7 @@ const AppHeader = () => {
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const user = useSelector((state) => state.auth);
+  const navLinks = user.isLoggedIn ? NAV_ITEMS[user.role] || [] : []; 
 
   const handleClick = async () => {
     console.log("click");
@@ -56,20 +71,14 @@ const AppHeader = () => {
           </div>
         )}
       </div>
-      { user.isLoggedIn && user.role === 'employee' &&
+      { user.isLoggedIn && 
         <Navbar isOpen={isOpen}>
-          <Link>Home</Link>
-          <Link>Visa</Link>
-          <Link>Profile</Link>
-          <AppButton handleClick={handleClick}> Logout </AppButton>
-        </Navbar>
-      }
-      { user.isLoggedIn && user.role === 'hr' && 
-        <Navbar isOpen={isOpen}>
-          <Link>Home</Link>
-          <Link>Hiring</Link>
-          <Link>Visa</Link>
-          <Link>Profile</Link>
+            { navLinks.map((link) => (
+              <Link key={link.path} onClick={() => navigate(link.path)}>
+                {link.label}
+              </Link>
+              ))
+            }
           <AppButton handleClick={handleClick}> Logout </AppButton>
         </Navbar>
       }
