@@ -8,15 +8,6 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
 
-<<<<<<< Updated upstream
-import { AppError } from "./utils/appError.js";
-import globalErrorHandler from "./controllers/errController.js";
-
-import userRouter from "./routers/userRouter.js";
-import hrRouter from "./routers/hrRouter.js";
-import fileRouter from "./routers/fileRouter.js";
-import onboardingRouter from "./routers/onboardingRouter.js";
-=======
 import { AppError } from "./utils/appError.js"; 
 import globalErrorHandler from './controllers/errController.js';
 
@@ -84,7 +75,7 @@ app.use((req, res, next) => {
   next(
     new AppError("Sorry, we couldn’t find the page you’re looking for.", 404)
   );
-=======
+
 app.use("/api/user", userRouter); 
 app.use("/api/hr", hrRouter);
 app.use('api/onboarding', onboardingRouter);
