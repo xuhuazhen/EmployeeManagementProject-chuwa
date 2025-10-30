@@ -8,13 +8,14 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
 
-import { AppError } from "./utils/appError.js";
-import globalErrorHandler from "./controllers/errController.js";
+import { AppError } from "./utils/appError.js"; 
+import globalErrorHandler from './controllers/errController.js';
 
-import userRouter from "./routers/userRouter.js";
-import hrRouter from "./routers/hrRouter.js";
-import fileRouter from "./routers/fileRouter.js";
-import onboardingRouter from "./routers/onboardingRouter.js";
+import userRouter from './routers/userRouter.js';
+import hrRouter from './routers/hrRouter.js';
+import fileRouter from './routers/fileRouter.js';
+import onboardingRouter from './routers/onboardingRouter.js';
+>>>>>>> Stashed changes
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -63,6 +64,7 @@ app.get("/", (req, res) => {
 });
 
 // 路由（注意这里仅写“路径片段”，不要写完整 URL）
+<<<<<<< Updated upstream
 app.use("/api/user", userRouter);
 app.use("/api/hr", hrRouter);
 app.use("api/onboarding", onboardingRouter);
@@ -73,6 +75,16 @@ app.use((req, res, next) => {
   next(
     new AppError("Sorry, we couldn’t find the page you’re looking for.", 404)
   );
+
+app.use("/api/user", userRouter); 
+app.use("/api/hr", hrRouter);
+app.use('api/onboarding', onboardingRouter);
+app.use('/api/file', fileRouter);
+
+// 404
+app.use((req, res, next) => {
+  next(new AppError("Sorry, we couldn’t find the page you’re looking for.", 404));
+>>>>>>> Stashed changes
 });
 
 // 统一错误处理（务必是最后一个）
