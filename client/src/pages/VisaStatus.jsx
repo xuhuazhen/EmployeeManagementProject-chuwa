@@ -43,22 +43,16 @@ const VisaStatusPage = () => {
 
     return (
         <MainLayout>
-            <Row
-                justify="center"
-                align="middle"
-                style={{ height: "80vh", textAlign: "center" }}
-            >
-                <Col>
+            <div>
                 {error && <Alert message={error} type="error" style={{ marginBottom: 16 }} />}
                     <VisaStatus
                         file={file}
-                        status={'reject'}
-                        feedback={'eee'}
+                        status={fileStatus}
+                        feedback={feedback}
                         setFile={setFile}
                         setFileStatus={setFileStatus}
                     />
-                </Col>
-            </Row>
+            </div>
         </MainLayout>
   );
 

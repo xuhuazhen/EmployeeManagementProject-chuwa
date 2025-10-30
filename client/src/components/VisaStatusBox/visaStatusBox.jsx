@@ -1,9 +1,9 @@
 // import FileUploader from "./FileUploader.jsx"; 
 import { Row, Col, Typography, Button, Space } from "antd";
 import styles from "./visaStatus.module.css";
-import DownloadButton from "../Button/DownloadButton/downloadButton"; 
+import DownloadButton from "../Button/DownloadButton/DownloadButton";
 import FileUploader from "./FileUploader";
-const { Text, Title } = Typography;
+const { Text, Title } = Typography; 
  
 const fileMapping = {
   ead: "Application",
@@ -15,8 +15,7 @@ const SAMPLE_FILE_URL = "https://ontheline.trincoll.edu/images/bookdown/sample-l
 const VisaStatus = ({ file, status, feedback, setFile, setFileStatus }) => {
     
   return (
-    <Row justify="center" className={styles.container}>
-      <Col xs={24} md={16} lg={12}>
+    <div className={styles.container}>
         <Title level={3} className={styles.title}>
           Visa Status
         </Title>
@@ -36,7 +35,7 @@ const VisaStatus = ({ file, status, feedback, setFile, setFileStatus }) => {
             <Text className={styles.text}>
               Please reupload your <b>{file}</b>
             </Text>
-            {/* <FileUploader setFile={setFile} setFileStatus={setFileStatus} tag={file} /> */}
+            <FileUploader setFile={setFile} setFileStatus={setFileStatus} tag={file} />
           </>
         )}
 
@@ -59,15 +58,14 @@ const VisaStatus = ({ file, status, feedback, setFile, setFileStatus }) => {
             <Text className={styles.text}>
               Please upload your <b>{file.toUpperCase()}</b>
             </Text>
-            {/* <FileUploader setFile={setFile} setFileStatus={setFileStatus} tag={file} /> */}
+            <FileUploader setFile={setFile} setFileStatus={setFileStatus} tag={file} />
           </>
         )}
 
         {status === "done" && file === "all" && (
           <Text className={styles.text}>All documents have been approved!</Text>
         )}
-      </Col>
-    </Row>
+    </div>
   );
 };
 

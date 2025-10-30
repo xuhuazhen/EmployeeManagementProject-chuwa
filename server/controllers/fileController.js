@@ -40,6 +40,8 @@ export const post_Avatar = catchAsync(async (req, res, next) => {
 
 /** 上传普通文件（带 label） */
 export const post_document = catchAsync(async (req, res, next) => {
+  console.log('req.file:', req.file);
+  console.log('user:', req.user); 
   const userId = req.user.userId;
   const tag = req.body.tag;
 
@@ -49,17 +51,18 @@ export const post_document = catchAsync(async (req, res, next) => {
     return next(new AppError('No user found', 404));
   }
 
-  const f = req.file;
+  const f = req.file;  
   const url = `/api/files/raw/${f.filename}`;
 
    const newDocument = await Document.create({
-    url: req.file.location,
+    url,
     title: req.file.originalname,
     tag,
     status: undefined,
   });
 
   const docId = await user.getDocIdByTag(tag);
+  console.log('new doc:', docId)
   //检查用户是否已经提交过文件，是则删除旧文件
   if (docId) {
     user.documents = user.documents.filter((doc) => doc.tag !== tag);
@@ -79,7 +82,7 @@ export const post_document = catchAsync(async (req, res, next) => {
     status: 'success',
     data: {
       _id: newDocument._id,
-      url: req.file.location,
+      url, 
       title: req.file.originalname,
       tag,
       nextStep: user.nextStep,
