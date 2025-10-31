@@ -45,7 +45,7 @@ const AppHeader = () => {
         dispatch(logout());
 
         message.success("Logout succeessful");
-        return navigate("/login");
+        navigate("/login");
       }
     } catch (err) {
       console.log(err);

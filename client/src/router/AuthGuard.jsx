@@ -5,8 +5,8 @@ import api from '../api/axiosConfig';
 import SignupPage from '../pages/Signup';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback } from 'react';
-import { login } from '../slices/authSlice';
-import { storeInfo } from '../slices/employeeSlice';
+import { login } from '../slices/authSlice'; 
+import { initUserThunk } from '../thunks/employeeThunk';
 
 const AuthGuard = ({ children }) => { 
   const [isLoading, setIsLoading] = useState(true);
@@ -31,7 +31,7 @@ const AuthGuard = ({ children }) => {
         if (!user.userID) {
             dispatch(login({ userID: curUser.userId, username: curUser.username, role: curUser.role }));
             console.log('dispatch')
-            if (curUser.role === 'employee')  dispatch(storeInfo(curUser.data));
+            if (curUser.role === 'employee')  dispatch(initUserThunk(curUser.userId));
         } 
       } else if ( location.pathname !== '/login' && location.pathname !== '/signup' ) {
             console.log('Redirect unauthenticated users');

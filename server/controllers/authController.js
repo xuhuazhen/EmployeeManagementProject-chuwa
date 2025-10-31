@@ -110,7 +110,6 @@ export const get_login = async (req, res, next) => {
         userId: decoded.id,
         username: decoded.username,
         role: decoded.role,
-        data: currentUser,
         nextStep: currentUser.nextStep,
       });
     } catch (err) {
