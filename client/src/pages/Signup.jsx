@@ -4,11 +4,15 @@ import { message } from 'antd';
 import api from '../api/axiosConfig';
 import { AuthForm } from '../components/AuthForm/authForm';
 import MainLayout from '../components/mainLayout/mainLayout';
+import { useDispatch } from 'react-redux';
+import { login } from '../slices/authSlice';
+import { storeInfo } from '../slices/employeeSlice';
 
 const SignupPage =  ({ signupEmail, signupToken }) => {
     const [loading, setLoading] = useState(false); 
     const navigate = useNavigate(); 
     const email = signupEmail; 
+    const dispatch = useDispatch();
 
     const handleSubmit = async (values) => {  
         setLoading(true); 
@@ -31,9 +35,11 @@ const SignupPage =  ({ signupEmail, signupToken }) => {
                 }    
             )
             if (res.data.status === "success") {
-              //const user = res.data.data.user; // ===>  dispatch to store
+                const user = res.data.data.user; // ===>  dispatch to store
+                dispatch(login({ userID: user._id, username: user.username, role: user.role, nextStep: user.nextStep }));
+                dispatch(storeInfo(user));
                 message.success('Signup successful!'); 
-                // navigate('/application'); //signup succeed==> application page
+                navigate('/onboarding'); //signup succeed==> application page
             }
         } catch(err) {
             if (err.response && err.response.data.message) message.error(err.response.data.message);

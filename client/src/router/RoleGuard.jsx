@@ -14,15 +14,13 @@ const RoleGuard = ({ allowedRole, children }) => {
       navigate('/err');
       return;
     }
-
     // employee的登录后导向逻辑
     if (user.role === 'employee') {
       const nextStep = user.nextStep?.split('-')[0];
+      console.log(user.nextStep);
       switch (nextStep) {
         case 'application':
-          if (location.pathname === '/' || location.pathname === '/login') {
             navigate('/onboarding');
-          }
           break;
         default:
           if (['/login', '/'].includes(location.pathname)) {
@@ -39,7 +37,7 @@ const RoleGuard = ({ allowedRole, children }) => {
         navigate('/hr/home');
       }
     }
-  }, [user.role, user.nextStep, navigate]);
+  }, [user.role, user.nextStep, user.isLoggedIn, navigate]);
 
   return children;
 };

@@ -22,6 +22,8 @@ import {
   saveOnboardingMe,
   buildOnboardingPayload,
 } from "../api/onboardingApi"; //;
+import MainLayout from '../components/mainLayout/mainLayout';
+import { useSelector } from 'react-redux';
 
 const { Title, Text } = Typography;
 
@@ -77,14 +79,14 @@ const DocUploadButton = ({ label, children }) => {
 
 const OnboardingApplication = () => {
   const [form] = Form.useForm();
-
+  const auth = useSelector(state => state.auth);
+  const employee = useSelector(state => state.employee);
+  
   // 回显（若后端已有数据）
   useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await getOnboardingMe();
+        const data = employee.employee;
         if (!data) return;
-
+        console.log(data);
         // 将后端数据解构回 Form
         const v = {};
         const p = data.personalInfo || {};
@@ -94,7 +96,7 @@ const OnboardingApplication = () => {
         const r = data.reference || {};
         const ecs = data.emergencyContact || [];
 
-        v.email = p.email || '';
+        v.email = data.email || '';
         v.firstName = p.firstName || '';
         v.lastName = p.lastName || '';
         v.middleName = p.middleName || '';
@@ -128,13 +130,8 @@ const OnboardingApplication = () => {
           { firstName: '', lastName: '', middleName: '', phone: '', email: '', relationship: '' }
         ];
 
-        form.setFieldsValue(v);
-      } catch (e) {
-        // 无需弹错，可能是首次填写
-        console.debug('getOnboardingMe failed or empty', e?.message);
-      }
-    })();
-  }, [form]);
+        form.setFieldsValue(v);  
+  }, [employee]);
 
   // 提交表单
   const onFinish = async (values) => {
@@ -161,6 +158,7 @@ const OnboardingApplication = () => {
   };
 
   return (
+    <MainLayout>
     <div style={{ maxWidth: 1000, margin: '0 auto', padding: 24 }}>
       <Title level={3}>Onboarding Application</Title>
       <Text type="secondary">
@@ -421,6 +419,7 @@ const OnboardingApplication = () => {
         </Form.Item>
       </Form>
     </div>
+    </MainLayout>
   );
 };
 

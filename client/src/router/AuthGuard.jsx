@@ -23,13 +23,12 @@ const AuthGuard = ({ children }) => {
         withCredentials: true,
       });
  
-      
       const curUser = response.data;
         console.log(response.data.isLogin, curUser);
       if (response.data.isLogin) {
         // 已登录保存当前登录的user信息
         if (!user.userID) {
-            dispatch(login({ userID: curUser.userId, username: curUser.username, role: curUser.role }));
+            dispatch(login({ userID: curUser._id, username: curUser.username, role: curUser.role, nextStep: curUser.nextStep }));
             console.log('dispatch')
             if (curUser.role === 'employee')  dispatch(initUserThunk(curUser.userId));
         } 
@@ -51,29 +50,29 @@ const AuthGuard = ({ children }) => {
     checkLoginStatus();
   }, [checkLoginStatus]);
 
-//   //登录状态变化时处理跳转逻辑
-//   useEffect(() => {
-//     if (!isLoading) {
-//         if (!isLoggedIn) {
-//         // 未登录的情况下，除 signup 外都跳回 login
-//             if (location.pathname !== '/signup') navigate('/login');
-//             return;
-//         }
-      
-//         const nextStep = user.nextStep?.split('-')[0];
-//         switch (nextStep) {
-//           case 'application':
-//             navigate('/application'); //或者/onboarding
-//             break;
-//           default:
-//             if (['/login', '/'].includes(location.pathname)) {
-//             //   navigate('/home?'); // Default redirect for logged-in users
-//             }
-//             break;
-//         }
+  // //登录状态变化时处理跳转逻辑
+  // useEffect(() => {
+  //   if (!isLoading) {
+  //       if (!user.isLoggedIn) {
+  //       // 未登录的情况下，除 signup 外都跳回 login
+  //           if (location.pathname !== '/signup') navigate('/login');
+  //           return;
+  //       }
+        
+  //       const nextStep = user.nextStep?.split('-')[0];
+  //       switch (nextStep) {
+  //         case 'application':
+  //           navigate('/onboarding'); 
+  //           break;
+  //         default:
+  //           if (['/login', '/'].includes(location.pathname)) {
+  //             navigate('/home'); // Default redirect for logged-in users
+  //           }
+  //           break;
+  //       }
  
-//     }
-//   }, [isLoggedIn, isLoading, user.nextStep, location.pathname, navigate]);
+  //   }
+  // }, [user, isLoading, user.nextStep, location.pathname, navigate]);
 
   if (isLoading) {
     return <LoadingSpin />

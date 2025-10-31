@@ -16,12 +16,14 @@ import LoadingSpin from "../components/LoadingSpin/loadingSpin";
 import MainLayout from "../components/mainLayout/mainLayout";
 import { mapProfileToFormData } from "../utils/mapProfileToFormData";
 import { storeInfo } from "../slices/employeeSlice";
+import { uploadAvatar } from "../api/onboardingApi";
 export default function ProfileDetailPage({ mode }) {
   // mode: "hr" | "employee"
   const [form] = Form.useForm();
   const [editing, setEditing] = useState(false); // employee 默认可编辑
   const [loading, setLoading] = useState(mode === "hr"); // hr 初始需要 fetch
   const [userData, setUserData] = useState(null);
+  const [file, setFile] = useState(null);
   const user =  useSelector(state => state.auth);
   const e =  useSelector(state => state.employee);
   const dispatch = useDispatch();
@@ -56,17 +58,26 @@ export default function ProfileDetailPage({ mode }) {
 
   const handleSave  = async () => {
     try {
-        const values = await form.validateFields();
-     
-        const { documents, ...formDataToSubmit } = values;
+        const values = await form.validateFields(); 
+
+        // 提取头像文件
+        const avatarPromise = file
+          ? uploadAvatar(file).then(res => {
+              file.url = res.data.url; // 更新 URL
+            })
+          : Promise.resolve(); 
+
+        //update form
+        const patchPromise = await api.patch(`/user/profile/${user.userID}`, values);
+            
         
-        const res = await api.patch(`/user/profile/${user.userID}`, formDataToSubmit);
-        dispatch(storeInfo(res.data.data)); //store current picked userinfo 
+        const [patchRes] = await Promise.all([patchPromise, avatarPromise]);
+        dispatch(storeInfo(patchRes.data.data)); //store current picked userinfo 
         message.success("Profile saved successfully!");
         setEditing(false);
     } catch (err) {
-      if (err.response && err.response.data.message)
-        message.error(err.response.data.message);
+      if (err.patchRes && err.patchRes.data.message)
+        message.error(err.patchRes.data.message);
       else message.error("Please fix the errors before saving");
     }
   };
@@ -93,7 +104,7 @@ export default function ProfileDetailPage({ mode }) {
         <h2 style={{marginBottom: '30px', marginLeft: '30px'}}> {mode !== "hr" ? "My Profile" : "Employee Profile Detail"} </h2>
         <Card style={{ maxWidth: 980, margin: "0 auto", padding: 16 }}>
         <Form form={form} layout="vertical">
-            <BasicInfoCard mainForm={form} readOnly={mode === "hr" || !editing} />
+            <BasicInfoCard mainForm={form} setFile={setFile} readOnly={mode === "hr" || !editing} />
             <AddressCard form={form} readOnly={mode === "hr" || !editing} />
             <ContactInfoCard form={form} readOnly={mode === "hr" || !editing} />
             <EmploymentCard form={form} readOnly={mode === "hr" || !editing} />

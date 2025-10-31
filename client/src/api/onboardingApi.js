@@ -5,7 +5,7 @@ import api from "./axiosConfig";
 export const uploadAvatar = (file) => {
   const fd = new FormData();
   fd.append("file", file);
-  return api.post("/api/file/upload/avatar", fd, {
+  return api.post("/file/upload/avatar", fd, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 };
@@ -14,16 +14,16 @@ export const uploadDocument = (file, label) => {
   const fd = new FormData();
   fd.append("file", file);
   // 服务端按 query.label 识别文档类型（driver-license / opt-receipt / ead / i-983 / i-20）
-  return api.post(`/api/file/upload?label=${encodeURIComponent(label)}`, fd, {
+  return api.post(`/file/upload?label=${encodeURIComponent(label)}`, fd, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 };
 
 // ------- Onboarding 读/写 -------
-export const getOnboardingMe = () => api.get("/api/onboarding/me");
+export const getOnboardingMe = () => api.get("/onboarding/me");
 
 export const saveOnboardingMe = (payload) =>
-  api.post("/api/onboarding/me", payload);
+  api.post("/onboarding/me", payload);
 
 // ------- 把表单值构造成「嵌套结构」匹配后端 User 模型 -------
 /**
