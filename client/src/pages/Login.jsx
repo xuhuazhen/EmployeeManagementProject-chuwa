@@ -25,12 +25,14 @@ const LoginPage = () => {
 
             if (res.data.status === "success") {
                 const user = res.data.data.user; 
-                
-                dispatch(login({ userID: user._id, role: user.role }));
+
+                dispatch(login({ userID: user._id, username: user.username, role: user.role }));
                 if (user.role === 'employee')  dispatch(storeInfo(user));
 
-                message.success('Welcome back!');
-                // navigate('/home', { replace: true }); ==> 根据user role和状态判断
+                message.success('Welcome back!'); 
+
+                const url = user.role === 'hr' ? '/hr/home' : '/home';
+                navigate(`${url}`, { replace: true }); //==> 根据user role和状态判断
             }  
         } catch (err) {
             if (err.response && err.response.data.message) message.error(err.response.data.message);
@@ -43,7 +45,7 @@ const LoginPage = () => {
     return (
         <MainLayout>
             <AuthForm
-                title='Sign in to your accoun' 
+                title='Sign in to your account.'
                 fields={[
                 {
                     name: 'username',

@@ -1,9 +1,4 @@
-import { Form, Input, Button, Card, Switch } from 'antd';
-import {
-    CloseOutlined,
-    MailTwoTone
-} from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import { Form, Input, Button, Card, Switch } from 'antd';  
 import styles from './style.module.css';
 
 export const AuthForm = ({
@@ -15,18 +10,17 @@ export const AuthForm = ({
     onSubmit,  
     }) => {
     
-        const [form] = Form.useForm();
-        const navigate = useNavigate();
+        const [form] = Form.useForm(); 
 
         return (
             <div className={styles.authPage}>
                 <Card className={styles.card} title={
                     <div className={styles.cardHeader}>
-                        <Button type="text"
+                        {/* <Button type="text"
                             className={styles.cardHeaderButton}  
                             icon={<CloseOutlined />}
                             onClick={() => navigate('/')}
-                        />        
+                        />         */}
                         <span className={styles.cardHeaderTitle}>{title}</span> 
                         {/* update password subtitle */}
                         { subtitle && 

@@ -5,60 +5,75 @@ import api from '../api/axiosConfig';
 import SignupPage from '../pages/Signup';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback } from 'react';
+import { login } from '../slices/authSlice'; 
+import { initUserThunk } from '../thunks/employeeThunk';
 
-const AuthGuard = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+const AuthGuard = ({ children }) => { 
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
-  const user = useSelector((state) => state.user); 
+  const user = useSelector((state) => state.auth); 
   const dispatch = useDispatch();
 
   const checkLoginStatus = useCallback(async () => {
+    console.log("chekcing login status ......to page:", children);
     setIsLoading(true);
     try {
       const response = await api.get('user/login', {
         withCredentials: true,
       });
-
-      setIsLoggedIn(response.data.isLogin);
+ 
       
-      if ( !isLoggedIn && 
-         location.pathname !== '/login' && location.pathname !== '/signup' ) {
+      const curUser = response.data;
+        console.log(response.data.isLogin, curUser);
+      if (response.data.isLogin) {
+        // 已登录保存当前登录的user信息
+        if (!user.userID) {
+            dispatch(login({ userID: curUser.userId, username: curUser.username, role: curUser.role }));
+            console.log('dispatch')
+            if (curUser.role === 'employee')  dispatch(initUserThunk(curUser.userId));
+        } 
+      } else if ( location.pathname !== '/login' && location.pathname !== '/signup' ) {
+            console.log('Redirect unauthenticated users');
             // Redirect unauthenticated users
             navigate('/login');
-        }
+      }
     } catch (error) {
       console.error('Authentication check failed:', error);
       navigate('/login');
     } finally {
       setIsLoading(false);
     }
-  }, [dispatch, navigate, location.pathname]);
+  }, [dispatch, user.userID, navigate, location.pathname]);
 
-  useEffect(() => {
+  // 组件加载时执行登录检查
+  useEffect(() => { 
     checkLoginStatus();
   }, [checkLoginStatus]);
 
-  useEffect(() => {
-    if (!isLoading) {
-      if (isLoggedIn) {
-        const nextStep = user.nextStep?.split('-')[0];
-        switch (nextStep) {
-          case 'application':
-            navigate('/application'); //或者/onboarding
-            break;
-          default:
-            if (['/login', '/'].includes(location.pathname)) {
-            //   navigate('/?'); // Default redirect for logged-in users
-            }
-            break;
-        }
-      } else if (location.pathname !== '/signup') {
-        navigate('/login');
-      }
-    }
-  }, [isLoggedIn, isLoading, user.nextStep, location.pathname, navigate]);
+//   //登录状态变化时处理跳转逻辑
+//   useEffect(() => {
+//     if (!isLoading) {
+//         if (!isLoggedIn) {
+//         // 未登录的情况下，除 signup 外都跳回 login
+//             if (location.pathname !== '/signup') navigate('/login');
+//             return;
+//         }
+      
+//         const nextStep = user.nextStep?.split('-')[0];
+//         switch (nextStep) {
+//           case 'application':
+//             navigate('/application'); //或者/onboarding
+//             break;
+//           default:
+//             if (['/login', '/'].includes(location.pathname)) {
+//             //   navigate('/home?'); // Default redirect for logged-in users
+//             }
+//             break;
+//         }
+ 
+//     }
+//   }, [isLoggedIn, isLoading, user.nextStep, location.pathname, navigate]);
 
   if (isLoading) {
     return <LoadingSpin />

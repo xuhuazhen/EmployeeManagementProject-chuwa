@@ -108,6 +108,7 @@ export const get_login = async (req, res, next) => {
       return res.status(200).json({
         isLogin: true,
         userId: decoded.id,
+        username: decoded.username,
         role: decoded.role,
         nextStep: currentUser.nextStep,
       });

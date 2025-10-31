@@ -148,5 +148,13 @@ UserSchema.methods.correctPassword = async function (
   return await argon2.verify(userPassword, candidatePassword);
 };
 
+UserSchema.methods.getDocIdByTag = async function (tag) {
+  for (const doc of this.documents) {
+    if (doc.tag === tag) return doc.id;
+  }
+  return null;
+};
+
+
 export const User = mongoose.model("User", UserSchema, "user");
 export const Document = mongoose.model("Document", DocumentSchema, "document");
