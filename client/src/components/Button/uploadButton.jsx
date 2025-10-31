@@ -2,7 +2,7 @@ import { Upload, Button, Progress } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 
 // props: onChange 回调会收到 file 对象
-const UploadButton = ({ onFileSelect }) => { 
+const UploadButton = ({ onFileSelect, isShow = true }) => { 
  
 
   return ( 
@@ -14,6 +14,7 @@ const UploadButton = ({ onFileSelect }) => {
         }}
         maxCount={1} // 限制只能选一个文件 \ 
         onRemove={() => onFileSelect(null)}
+        showUploadList={{ showRemoveIcon: isShow }}
     >
         <Button icon={<UploadOutlined />}>
             Select file

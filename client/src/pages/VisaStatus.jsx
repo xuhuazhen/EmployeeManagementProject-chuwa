@@ -1,8 +1,7 @@
 
 import { useEffect, useState } from "react"; 
-import LoadingSpin from "../components/LoadingSpin/loadingSpin";
-import api from "../api/axiosConfig";
-import { Row, Col, Typography, Alert } from "antd";
+import LoadingSpin from "../components/LoadingSpin/loadingSpin"; 
+import { Alert } from "antd";
 import MainLayout from "../components/mainLayout/mainLayout";
 import VisaStatus from "../components/VisaStatusBox/visaStatusBox";
 import { useLocation } from "react-router-dom";

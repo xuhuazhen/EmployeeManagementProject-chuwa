@@ -6,16 +6,23 @@ import {
   get_logout,
   get_signup,
 } from "../controllers/authController.js";
-import { get_nextStep, get_profile } from "../controllers/userController.js";
+import { get_nextStep, get_profile, patch_profile } from "../controllers/userController.js";
 import {
   signupUserValidation,
   loginUserValidation,
   authValidation,
+  applicationStatusValidation,
 } from "../middleware/userMiddleware.js";
 
 const router = express.Router();
 
-router.route("/profile/:id").get(get_profile);
+router.route("/profile/:id")
+    .get(authValidation, get_profile)
+    .patch(
+        authValidation,
+        applicationStatusValidation,
+        patch_profile
+    );
 
 router.get("/signup/:signupToken", get_signup);
 router.post("/signup", signupUserValidation, post_signup);

@@ -1,5 +1,6 @@
 // user info --  employee use / or hr use to store selected employee info
 import { createSlice } from '@reduxjs/toolkit';
+import { initUserThunk } from '../thunks/employeeThunk';
 
 const employeeSlice = createSlice({
   name: 'employee',
@@ -39,6 +40,21 @@ const employeeSlice = createSlice({
             nextStep: nextStep,
         };
     }
+  }, extraReducers: (builder) => {
+        builder
+        .addCase(initUserThunk.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+        })
+        .addCase(initUserThunk.fulfilled, (state, action) => {
+            state.loading = false;
+            state.employee = action.payload || [];
+        })
+        .addCase(initUserThunk.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        })
+        
   }
 });
 

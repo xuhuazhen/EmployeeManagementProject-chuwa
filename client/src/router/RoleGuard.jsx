@@ -10,7 +10,7 @@ const RoleGuard = ({ allowedRole, children }) => {
   useEffect(() => {
     console.log("chekcing user role ......", user.role);
     // 如果角色不匹配，直接拦截
-    if (allowedRole && allowedRole !== user.role) {
+    if (user.isLoggedIn && allowedRole && allowedRole !== user.role) {
       navigate('/err');
       return;
     }
