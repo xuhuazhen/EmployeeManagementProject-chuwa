@@ -1,15 +1,10 @@
-import { Router } from 'express';
-import {
-  get_Onboarding,
-  update_Onboarding
-} from '../controllers/onboardingController.js';
+// server/routers/onboardingRouter.js
+import express from "express";
+import { get_Onboarding, save_Onboarding } from "../controllers/onboardingController.js";
 
-const router = Router();
+const router = express.Router();
 
-router.route('/:id')
-  // 获取我的 Onboarding 信息
-  .get(get_Onboarding)
-  // 提交/更新 Onboarding 表单
-  .post(update_Onboarding);
+router.get("/me", get_Onboarding);
+router.post("/me", save_Onboarding);
 
 export default router;

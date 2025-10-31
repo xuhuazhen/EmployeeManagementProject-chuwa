@@ -1,3 +1,6 @@
+import React from 'react';
+import OnboardingApplication from './pages/OnboardingApplication';
+
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import MainLayout from "./components/mainLayout/mainLayout";
 import { AuthGuardForSignup } from './router/AuthGuard';
@@ -10,14 +13,14 @@ import HomePage from "./pages/Home";
 import Protected from "./router/Protected";
 import VisaStatusPage from "./pages/VisaStatus";
 import ProfileDetailPage from "./pages/ProfileDetail";
-import ErrorPage from "./pages/ErrorPage";
+import ErrorPage from "./pages/ErrorPage"
 
-
-const App = () => {
-  // return <MainLayout />;
+export default function App() {
   return (
-    <Router>
+    <BrowserRouter>
       <Routes>
+        <Route path="/" element={<Navigate to="/onboarding" replace />} />
+        <Route path="/onboarding" element={<OnboardingApplication />} />
         {/* 之后加入publicroute */}
         <Route path="/login" element={
           <Protected>
@@ -88,9 +91,8 @@ const App = () => {
             </Protected>} 
         />
          {/* 错误页面 */}
-        <Route path="*" element={<ErrorPage /> }></Route>   
+        <Route path="*" element={<ErrorPage /> }></Route>  
       </Routes>
-    </Router>
-)};
-
-export default App;
+    </BrowserRouter>
+  );
+}

@@ -1,9 +1,15 @@
+// client/src/api/axiosConfig.js
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:3000/api",   // 统一指向后端
-  withCredentials: true,                   // 携带 cookie（和后端 Session/Token 配合）
-  headers: { "Content-Type": "application/json" },
+  baseURL: "http://localhost:3000",
+  withCredentials: true,
 });
-  
+
+// 开发阶段：用请求头模拟登录身份（和后端一致）
+api.interceptors.request.use((config) => {
+  config.headers["X-Demo-Userid"] = "user-0001";
+  return config;
+});
+
 export default api;
