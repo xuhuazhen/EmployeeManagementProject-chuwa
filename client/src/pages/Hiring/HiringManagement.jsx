@@ -10,6 +10,7 @@ import DocumentReviewModal from "../../components/Modal/DocumentReviewModal";
 import AppButton from "../../components/Button/AppButton";
 import api from "../../api/axiosConfig";
 import { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 
 const HiringManagement = () => {
   const [profiles, setProfiles] = useState([]);
@@ -17,6 +18,7 @@ const HiringManagement = () => {
   const [activeTab, setActiveTab] = useState("email history");
   const [previewDoc, setPreviewDoc] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const navigate = useNavigate();
 
   const { Title, Text } = Typography;
 
@@ -126,7 +128,14 @@ const HiringManagement = () => {
       title: "Name",
       dataIndex: ["name"],
       key: "name",
-      render: (name) => <a>{name}</a>,
+      render: (_, record) => (
+        <a
+          onClick={() => navigate(`/hr/profiles/${record._id}`)}
+          style={{ color: "#1677ff", cursor: "pointer" }}
+        >
+          {record.name}
+        </a>
+      ),
     },
     {
       title: "Title",
