@@ -71,7 +71,7 @@ app.use("/api/file", fileRouter);
 // 404
 app.use((req, res, next) => {
   next(
-    new AppError("Sorry, we couldn’t find the page you’re looking for.", 404)
+    new AppError("Sorry, we couldn't find the page you're looking for.", 404)
   );
 });
 

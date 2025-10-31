@@ -1,8 +1,9 @@
+import { Modal, Typography, Input, Space } from "antd";
 import { useState } from "react";
-import { Modal, Input, message, Space } from "antd";
 import AppButton from "../Button/AppButton";
 import styles from "./DocumentReviewModal.module.css";
 
+const { Text } = Typography;
 const { TextArea } = Input;
 
 const DocumentReviewModal = ({
@@ -11,131 +12,105 @@ const DocumentReviewModal = ({
   onClose,
   onApprove,
   onReject,
-  onSendFeedback,
-  context,
 }) => {
-  const [isRejecting, setIsRejecting] = useState(false);
+  const [isFeedbackVisible, setIsFeedbackVisible] = useState(false);
   const [feedback, setFeedback] = useState("");
 
   if (!document) return null;
 
-  const handleApproveClick = () => {
-    onApprove?.(document);
-    message.success(`${document.title} approved`);
-    onClose();
+  const handleApprove = () => {
+    if (onApprove) {
+      onApprove(document);
+      setIsFeedbackVisible(false);
+    }
   };
 
-  const handleRejectClick = () => setIsRejecting(true);
+  const handleRejectClick = () => {
+    if (!onReject) return;
 
-  const handleSendFeedback = () => {
-    if (!feedback.trim()) {
-      message.warning("Please provide feedback before sending.");
+    if (!isFeedbackVisible) {
+      setIsFeedbackVisible(true);
       return;
     }
-    onReject?.(document, feedback);
-    onSendFeedback?.(document, feedback);
-    message.info("Feedback sent to employee.");
+
+    if (!feedback.trim()) return;
+
+    onReject(document, feedback);
     setFeedback("");
-    setIsRejecting(false);
-    onClose();
+    setIsFeedbackVisible(false);
   };
 
-  const handleDownload = () => {
-    if (!document?.url) {
-      message.error("No document available to download.");
-      return;
-    }
-
-    const link = document.createElement("a");
-    link.href = document.url;
-    link.download = document.title || "document.pdf";
-    link.target = "_blank";
-    link.click();
+  const handleCancelReject = () => {
+    setIsFeedbackVisible(false);
+    setFeedback("");
   };
+  // Conditionally render footer only if actions exist
+  const footer =
+    onApprove || onReject ? (
+      <Space>
+        {!isFeedbackVisible && onApprove && (
+          <AppButton onClick={handleApprove}>Approve</AppButton>
+        )}
+
+        {!isFeedbackVisible && onReject && (
+          <AppButton
+            className={styles.buttonReject}
+            onClick={handleRejectClick}
+          >
+            Reject
+          </AppButton>
+        )}
+
+        {isFeedbackVisible && (
+          <>
+            <AppButton
+              className={styles.buttonApprove}
+              onClick={handleRejectClick}
+            >
+              Submit Rejection
+            </AppButton>
+            <AppButton
+              className={styles.buttonReject}
+              onClick={handleCancelReject}
+            >
+              Cancel
+            </AppButton>
+          </>
+        )}
+      </Space>
+    ) : null;
 
   return (
     <Modal
+      title={`Review Document: ${document.title}`}
       open={visible}
-      onCancel={onClose}
-      title={document.title || "Document Review"}
-      footer={null}
-      width={800}
-      centered
+      onCancel={() => {
+        setIsFeedbackVisible(false);
+        setFeedback("");
+        onClose();
+      }}
+      footer={footer}
+      width={600}
     >
-      {/* Document preview */}
-      {document.url ? (
+      <div style={{ marginBottom: 16 }}>
         <iframe
           src={document.url}
           title={document.title}
           width="100%"
-          height="500px"
-          style={{
-            border: "1px solid #eee",
-            borderRadius: 8,
-            marginBottom: 16,
-          }}
+          height="400px"
+          style={{ border: "1px solid #ddd", borderRadius: 4 }}
         />
-      ) : (
-        <p>No document available for preview</p>
-      )}
+      </div>
 
-      {/* Action buttons */}
-      {!isRejecting && (
-        <Space style={{ display: "flex", justifyContent: "flex-end" }}>
-          {/* Show Download button only in the “all” context */}
-          {context === "all" && (
-            <AppButton className={styles.buttonAccept} onClick={handleDownload}>
-              Download
-            </AppButton>
-          )}
-
-          {/* Show Approve/Reject buttons for HR review tabs */}
-          {context === "in progress" && (
-            <>
-              <AppButton
-                className={styles.buttonAccept}
-                onClick={handleApproveClick}
-              >
-                Approve
-              </AppButton>
-              <AppButton
-                className={styles.buttonReject}
-                onClick={handleRejectClick}
-              >
-                Reject
-              </AppButton>
-            </>
-          )}
-        </Space>
-      )}
-
-      {/* Rejecting state */}
-      {isRejecting && (
+      {isFeedbackVisible && onReject && (
         <div style={{ marginTop: 16 }}>
+          <Text strong>Feedback (required for rejection):</Text>
           <TextArea
-            rows={4}
-            placeholder="Enter feedback for rejection..."
             value={feedback}
             onChange={(e) => setFeedback(e.target.value)}
+            placeholder="Enter feedback here..."
+            rows={4}
           />
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginTop: 10,
-              gap: 8,
-            }}
-          >
-            <AppButton
-              className={styles.buttonCancel}
-              onClick={() => setIsRejecting(false)}
-            >
-              Cancel
-            </AppButton>
-            <AppButton onClick={handleSendFeedback}>
-              Send Notification
-            </AppButton>
-          </div>
         </div>
       )}
     </Modal>
