@@ -14,6 +14,7 @@ import Protected from "./router/Protected";
 import VisaStatusPage from "./pages/VisaStatus";
 import ProfileDetailPage from "./pages/ProfileDetail";
 import ErrorPage from "./pages/ErrorPage"
+import Profiles from './pages/Profiles/Profiles';
 
 export default function App() {
   return (
@@ -88,6 +89,13 @@ export default function App() {
           element={
             <Protected route="hr">
               <ProfileDetailPage mode={"hr"} />
+            </Protected>} 
+        />
+        <Route 
+          path='/hr/profiles'
+          element={
+            <Protected route="hr">
+              <Profiles />
             </Protected>} 
         />
          {/* 错误页面 */}
