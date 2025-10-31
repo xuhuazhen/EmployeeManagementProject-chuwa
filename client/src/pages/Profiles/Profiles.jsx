@@ -1,47 +1,40 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import AppTable from "../../components/Table/AppTable";
-import MainLayout from "../../components/mainLayout/mainLayout";
-import styles from "./Profiles.module.css";
-import { Flex, Typography } from "antd";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAllEmployees } from "../../thunks/hrEmployeesThunk";
 import SearchBar from "../../components/SearchBar/SearchBar";
-import { formatProfile } from "../../utils/formatProfile";
+import MainLayout from "../../components/mainLayout/mainLayout";
+import { Typography, Flex } from "antd";
+import AppTable from "../../components/Table/AppTable";
+import styles from "./Profiles.module.css";
+import { setSearch } from "../../slices/hrEmployeesSlice";
+
+const { Title, Text } = Typography;
 
 const Profiles = () => {
-  const [profiles, setProfiles] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  const { Title, Text } = Typography;
+  const dispatch = useDispatch();
+  const {
+    all: employees,
+    loading,
+    error,
+    search,
+  } = useSelector((store) => store.hrEmployees);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchProfiles = async () => {
-      try {
-        setLoading(true);
-        const res = await axios.get("http://localhost:3000/api/hr/profiles");
-        const profiles = res.data.data.map(formatProfile);
-        setProfiles(profiles);
-      } catch (err) {
-        console.error("Error fetching profiles:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProfiles();
-  }, []);
+    dispatch(fetchAllEmployees({ search: search }));
+  }, [dispatch, search]);
 
   const columns = [
     {
       title: "Name",
-      dataIndex: ["name"],
+      dataIndex: "name",
       key: "name",
-      render: (text) => <a>{text}</a>,
+      render: (text, record) => (
+        <a onClick={() => navigate(`/hr/profiles/${record._id}`)}>{text}</a>
+      ),
     },
-    {
-      title: "SSN",
-      dataIndex: ["personalInfo", "ssn"],
-      key: "ssn",
-    },
+    { title: "SSN", dataIndex: ["personalInfo", "ssn"], key: "ssn" },
     {
       title: "Work Authorization",
       dataIndex: ["employment", "visaTitle"],
@@ -52,12 +45,10 @@ const Profiles = () => {
       dataIndex: ["contactInfo", "cellPhoneNumber"],
       key: "cellPhoneNumber",
     },
-    {
-      title: "Email",
-      dataIndex: ["email"],
-      key: "email",
-    },
+    { title: "Email", dataIndex: "email", key: "email" },
   ];
+
+  console.log(employees);
 
   return (
     <MainLayout>
@@ -66,10 +57,12 @@ const Profiles = () => {
           Employee Profiles
         </Title>
         <Text className={styles.total}>
-          <strong>Total:</strong> {profiles.length} Employees
+          <strong>Total:</strong> {employees.length} Employees
         </Text>
-        <SearchBar className={styles.search} />
-        <AppTable columns={columns} data={profiles} loading={loading} />
+
+        <SearchBar onSearch={(value) => dispatch(setSearch(value))} />
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        <AppTable columns={columns} data={employees} loading={loading} />
       </Flex>
     </MainLayout>
   );

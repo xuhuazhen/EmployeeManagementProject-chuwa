@@ -53,32 +53,6 @@
   padding: 6px 12px;
 }
 
-.container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  width: 100%;
-  margin-top: 1rem;
-}
-
-.label {
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.input {
-  flex: 1;
-  min-width: 200px;
-  max-width: 400px;
-}
-
-.button {
-  white-space: nowrap;
-  padding: 6px 35px;
-}
-
 @media (max-width: 768px) {
   .topBar {
     flex-direction: column;
