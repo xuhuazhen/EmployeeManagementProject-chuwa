@@ -9,6 +9,8 @@ import VisaManagement from "./pages/VisaManagement/VisaManagement";
 import HomePage from "./pages/Home";
 import Protected from "./router/Protected";
 import VisaStatusPage from "./pages/VisaStatus";
+import ProfileDetailPage from "./pages/ProfileDetail";
+import ErrorPage from "./pages/ErrorPage";
 
 
 const App = () => {
@@ -50,12 +52,12 @@ const App = () => {
             // </Protected>
           } 
         />
-        {/* <Route path="/personal-info" 
+        <Route path="/personal-info" 
           element={
             <Protected route="employee">
-              <PersonalInfo />
+              <ProfileDetailPage mode={"employee"} />
             </Protected>} 
-        /> */}
+        />
         
         {/*------------- HR 页面 ----------*/}
         <Route 
@@ -78,8 +80,15 @@ const App = () => {
               <VisaManagement />
             </Protected>} 
         />
+        <Route 
+          path='/hr/profiles/:id'
+          element={
+            <Protected route="hr">
+              <ProfileDetailPage mode={"hr"} />
+            </Protected>} 
+        />
          {/* 错误页面 */}
-        {/* <Route path="*" element={<ErrorPage />} />      */}
+        <Route path="*" element={<ErrorPage /> }></Route>   
       </Routes>
     </Router>
 )};
