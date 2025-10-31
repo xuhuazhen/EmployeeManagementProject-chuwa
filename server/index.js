@@ -1,14 +1,15 @@
-import app from './app.js';
-import connectDB from './config/db.js';
+// server/index.js
+import "dotenv/config";            // 先加载 .env
+import app from "./app.js";
+import { connectDB } from "./config/db.js";
 
 const port = process.env.PORT || 3000;
 
-// make sure the app running after the db has connected successfully.
-const startServer = async () => {
-  await connectDB(); 
+async function start() {
+  await connectDB();
   app.listen(port, () => {
     console.log(`Server is up and running on: http://localhost:${port}`);
   });
-};
+}
 
-startServer();
+start();
