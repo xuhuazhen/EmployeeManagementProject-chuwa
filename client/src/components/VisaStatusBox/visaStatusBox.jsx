@@ -1,5 +1,5 @@
 // import FileUploader from "./FileUploader.jsx"; 
-import { Row, Col, Typography, Button, Space } from "antd";
+import { Typography, Space } from "antd";
 import styles from "./visaStatus.module.css";
 import DownloadButton from "../Button/DownloadButton/DownloadButton";
 import FileUploader from "./FileUploader";

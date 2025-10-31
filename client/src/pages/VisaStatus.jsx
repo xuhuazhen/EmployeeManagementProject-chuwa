@@ -6,6 +6,7 @@ import { Row, Col, Typography, Alert } from "antd";
 import MainLayout from "../components/mainLayout/mainLayout";
 import VisaStatus from "../components/VisaStatusBox/visaStatusBox";
 import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const VisaStatusPage = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -14,27 +15,30 @@ const VisaStatusPage = () => {
     const [fileStatus, setFileStatus] = useState("");
     const [feedback, setFeedback] = useState("");
     const location = useLocation();
+    const user = useSelector(state => state.employee.employee);
  
     useEffect(() => {
         setError(null);
-        setIsLoading(true);
-        async function getNextStep() {
-            try {
-                const res = await api.get("/user/nextstep", {
-                    withCredentials: true,
-                });
-                console.log("get user nextstep:", res.data)
-                const nextStep = res.data.nextStep;
-                setFile(nextStep.split("-")[0]);
-                setFileStatus(nextStep.split("-")[1]);
-                setFeedback(res.data.feedback || "");
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setIsLoading(false);
-            }
-        }
-        getNextStep();
+        setIsLoading(true); 
+        const nextStep = user.nextStep;
+        setFile(nextStep.split("-")[0]);
+        setFileStatus(nextStep.split("-")[1]);
+        setFeedback(user.feedback || "");  
+        setIsLoading(false);
+        // async function getNextStep() {
+        //     try {
+        //         const res = await api.get("/user/nextstep", {
+        //             withCredentials: true,
+        //         });
+        //         console.log("get user nextstep:", res.data)
+        //        
+        //     } catch (err) {
+        //         setError(err.message);
+        //     } finally {
+        //         setIsLoading(false);
+        //     }
+        // }
+        // getNextStep();
     }, [location.pathname]);
 
     if (isLoading) {

@@ -1,67 +1,17 @@
 import { useState } from "react"; 
-import { useDispatch } from "react-redux"; 
-import api from "../../api/axiosConfig";
+import { useDispatch } from "react-redux";  
 import UploadButton from "../Button/UploadButton";
 import { message, Progress, Button } from "antd";
 import AppButton from "../Button/AppButton";
 import style from './visaStatus.module.css';
 import axios from "axios";
-
-
-// const FileUploader = ({ tag, setFile, setFileStatus }) => {
-//   const [progress, setProgress] = useState(0);
-//   const [showProgress, setShowProgress] = useState(false);
-//   const dispatch = useDispatch();
-
-//   const handleUpload = async (event) => {
-//     const file = event.target.files[0];
-//     console.log(file)
-//     if (!file) return; // Exit if no file is selected
-
-//     setShowProgress(true); // Show progress bar when upload starts
-//     setProgress(0); // Reset progress to 0
-
-//     const formData = new FormData();
-//     formData.append("document", file);
-//     formData.append("tag", tag); 
-
-//     try {
-//       const uploadResponse = await axios.post('http://localhost:3000/api/file/upload', formData, {
-//          headers: {
-//           "Content-Type": "multipart/form-data",
-//         },
-//         withCredentials: true,
-//       });
-
-//       setProgress(100); // Set progress to 100 on successful upload
-
-//       // Since you're already in an async function, you can directly await this call
-
-//       const nextStep = uploadResponse.data.data.nextStep; 
-//       setFile(nextStep.split("-")[0]);
-//       setFileStatus(nextStep.split("-")[1]);
-//     } catch (error) {
-//       console.error("Upload error:", error);
-//     } finally {
-//       setShowProgress(false);
-//       // Hide progress bar after upload completes/fails
-//     }
-//   };
-
-//   return (
-//     <div>
-//        <input type="file" onChange={handleUpload}/>
-//     </div>
-//   );
-// };
-
-// export default FileUploader;
-
+import { updateDoc } from "../../slices/employeeSlice";
 
 const FileUploader = ({ tag, setFile, setFileStatus }) => {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [selectedFile, setSelectedFile] = useState(null);  
+  const dispatch = useDispatch();
 
   const handleUpload = async () => {
     if (!selectedFile) return;
@@ -90,12 +40,12 @@ const FileUploader = ({ tag, setFile, setFileStatus }) => {
 
       setProgress(100); // Set progress to 100 on successful upload
 
-      // Since you're already in an async function, you can directly await this call
-
+      dispatch(updateDoc(uploadResponse.data.data));
       const nextStep = uploadResponse.data.data.nextStep;
-      //dispatch(updatefile)
       setFile(nextStep.split("-")[0]);
       setFileStatus(nextStep.split("-")[1]);
+      
+      message.success('File upload successful!');
     } catch (error) {
       console.error("Upload error:", error);
     } finally {
