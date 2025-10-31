@@ -1,49 +1,51 @@
 .profileContainer {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 16px;
 }
 
 .title {
   align-self: center;
 }
 
-.total {
-  position: absolute;
-  left: 0;
-}
-
-.total strong {
-  font-size: 16px;
-}
-
 .topBar {
-  position: relative;
   display: flex;
+  justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.total {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.searchWrapper {
+  flex: 1;
+  display: flex;
   justify-content: center;
-  width: 100%;
-}
-
-.topBar :global(.ant-tabs) {
-  margin: 0;
-  padding: 0;
-}
-
-.topBar :global(.ant-tabs-nav) {
-  margin: 0 !important;
-}
-
-.topBar :global(.ant-tabs-nav-wrap) {
-  align-items: center;
-  display: flex;
-}
-.topBar :global(.ant-tabs-nav::before) {
-  border-bottom: none !important;
+  min-width: 200px;
 }
 
 .buttonView,
 .buttonSend {
   font-size: 12px;
   padding: 6px 12px;
+}
+
+@media (max-width: 768px) {
+  .topBar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .searchWrapper {
+    justify-content: stretch;
+  }
+
+  .total {
+    text-align: center;
+  }
 }

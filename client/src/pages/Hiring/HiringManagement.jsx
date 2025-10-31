@@ -37,24 +37,22 @@ const HiringManagement = () => {
     fetchProfiles();
   }, []);
 
-
-  const handleClick = useCallback(async (values) => { 
+  const handleClick = useCallback(async (values) => {
     try {
-      const res  = await api.post('hr/signup',
-         values,
-        { withCredentials: true }
-      );
-            
+      const res = await api.post("hr/signup", values, {
+        withCredentials: true,
+      });
+
       if (res.data.status === "success") {
-        message.success('Email send succed!'); 
-      }  
+        message.success("Email send succed!");
+      }
     } catch (err) {
       if (err.response && err.response.data.message) {
         message.error(err.response.data.message);
       } else {
         message.error("Unable to send reset link. Please try again later.");
       }
-    } 
+    }
   }, []);
 
   const openPreview = (doc) => {
@@ -241,34 +239,33 @@ const HiringManagement = () => {
 
     const onSend = () => {
       if (!validateInputs()) return;
-      handleClick({email, fullName});
+      handleClick({ email, fullName });
       setEmail("");
       setFullName("");
-    }
+    };
     return (
       <div className={styles.container}>
         <Text className={styles.label}>Send registration</Text>
-        <Input className={styles.input} 
-          placeholder="Enter email..." 
+        <Input
+          className={styles.input}
+          placeholder="Enter email..."
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <Input className={styles.input} 
-          placeholder="Enter full name..." 
+        <Input
+          className={styles.input}
+          placeholder="Enter full name..."
           type="text"
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
         />
-        <AppButton 
-          className={styles.button}
-          onClick={onSend}
-        >
+        <AppButton className={styles.button} onClick={onSend}>
           Send
         </AppButton>
       </div>
     );
-});
+  });
 
   return (
     <MainLayout>
@@ -287,9 +284,9 @@ const HiringManagement = () => {
             items={items}
           />
         </Flex>
-        { activeTab === "email history" && 
+        {activeTab === "email history" && (
           <RegistrantionToken handleClick={handleClick} />
-        }
+        )}
         <AppTable columns={columns} data={filteredProfiles} loading={loading} />
       </Flex>
       <DocumentReviewModal

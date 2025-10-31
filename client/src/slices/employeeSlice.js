@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { initUserThunk } from '../thunks/employeeThunk';
 
 const employeeSlice = createSlice({
-  name: 'employee',
+  name: "employee",
   initialState: {
     employee: [], // 员工资料对象
     loading: false,
