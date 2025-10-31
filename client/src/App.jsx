@@ -1,34 +1,36 @@
-import React from 'react';
-import OnboardingApplication from './pages/OnboardingApplication';
+import React from "react";
+import OnboardingApplication from "./pages/OnboardingApplication";
 
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import MainLayout from "./components/mainLayout/mainLayout";
 import { AuthGuardForSignup } from "./router/AuthGuard";
 import SignupPage from "./pages/Signup";
 import LoginPage from "./pages/Login";
-import Profiles from "./pages/Profiles/Profiles";
-import VisaManagement from "./pages/VisaManagement/VisaManagement";
 import HiringManagement from "./pages/Hiring/HiringManagement";
-import Onboarding from "./pages/Onboarding";
+// import Onboarding from "./pages/Onboarding";
 import VisaManagement from "./pages/VisaManagement/VisaManagement";
 import HomePage from "./pages/Home";
 import Protected from "./router/Protected";
 import VisaStatusPage from "./pages/VisaStatus";
 import ProfileDetailPage from "./pages/ProfileDetail";
-import ErrorPage from "./pages/ErrorPage"
+import ErrorPage from "./pages/ErrorPage";
+import Profiles from "./pages/Profiles/Profiles";
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/onboarding" replace />} />
-        <Route path="/onboarding" element={<OnboardingApplication />} />
+        {/* <Route path="/" element={<Navigate to="/onboarding" replace />} /> */}
+        {/* <Route path="/onboarding" element={<OnboardingApplication />} /> */}
         {/* 之后加入publicroute */}
-        <Route path="/login" element={
-          <Protected>
-            <LoginPage />
-          </Protected>} 
-        /> 
+        <Route
+          path="/login"
+          element={
+            <Protected>
+              <LoginPage />
+            </Protected>
+          }
+        />
         <Route
           path="/signup/*"
           element={
@@ -37,75 +39,84 @@ export default function App() {
             </AuthGuardForSignup>
           }
         />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/profiles" element={<Profiles />} />
-        {/* <Route path="/profiles/:id" element={<EmployeeDetail />} /> */}
-        <Route path="/visamanagement" element={<VisaManagement />} />
-        <Route path="/hiringmanagement" element={<HiringManagement />} />
-      </Routes>
-    </Router>
-  );
-};
-
-export default App;
         {/* -----------员工页面 ----------*/}
-        <Route path="/visa-status" 
+        <Route
+          path="/visa-status"
           element={
             <Protected route="employee">
               <VisaStatusPage />
-            </Protected>} 
+            </Protected>
+          }
         />
-        <Route path="/home" 
+        <Route
+          path="/home"
           element={
             <Protected route="employee">
               <HomePage />
-            </Protected>} 
+            </Protected>
+          }
         />
-        <Route path="/onboarding" 
+        <Route
+          path="/onboarding"
           element={
-            // <Protected route="employee">
-              <Onboarding />
-            // </Protected>
-          } 
+            <Protected route="employee">
+              <OnboardingApplication />
+            </Protected>
+          }
         />
-        <Route path="/personal-info" 
+        <Route
+          path="/personal-info"
           element={
             <Protected route="employee">
               <ProfileDetailPage mode={"employee"} />
-            </Protected>} 
+            </Protected>
+          }
         />
-        
+
         {/*------------- HR 页面 ----------*/}
-        <Route 
-          path='/hr/hiring'
+        <Route
+          path="/hr/hiring"
           element={
             <Protected route="hr">
-              <HiringManagement/>
-            </Protected>} 
+              <HiringManagement />
+            </Protected>
+          }
         />
-        <Route path="/hr/home" 
+        <Route
+          path="/hr/home"
           element={
             <Protected route="hr">
               <HomePage />
-            </Protected>} 
+            </Protected>
+          }
         />
-        <Route 
-          path='/hr/visa-management'
+        <Route
+          path="/hr/visa-management"
           element={
             <Protected route="hr">
               <VisaManagement />
-            </Protected>} 
+            </Protected>
+          }
         />
-        <Route 
-          path='/hr/profiles/:id'
+        <Route
+          path="/hr/profiles/:id"
           element={
             <Protected route="hr">
               <ProfileDetailPage mode={"hr"} />
-            </Protected>} 
+            </Protected>
+          }
         />
-         {/* 错误页面 */}
-        <Route path="*" element={<ErrorPage /> }></Route>  
+        <Route
+          path="/hr/profiles"
+          element={
+            <Protected route="hr">
+              <Profiles />
+            </Protected>
+          }
+        />
+        {/* 错误页面 */}
+        <Route path="*" element={<ErrorPage />}></Route>
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }
