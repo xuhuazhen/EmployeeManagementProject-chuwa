@@ -6,8 +6,9 @@ import {
   post_Avatar,
   post_document
 } from '../controllers/fileController.js';
+import { authValidation } from '../middleware/userMiddleware.js';  
 
-const router = Router();
+const router = Router(); 
 
 // 文件预览（直接打开）
 router.get('/raw/:name', get_preview);
@@ -16,9 +17,9 @@ router.get('/raw/:name', get_preview);
 router.get('/download/:name', get_download);
 
 // 上传头像
-router.post('/avatar', upload.single('file'), post_Avatar);
+router.post('/avatar', upload.single('file'), authValidation, post_Avatar);
 
 // 上传普通文档
-router.post('/upload', upload.single('file'), post_document);
+router.post('/upload', upload.single('document'), authValidation, post_document);
 
 export default router;

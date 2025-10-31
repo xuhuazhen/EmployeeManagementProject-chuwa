@@ -68,7 +68,7 @@ export const loginUserValidation = (req, res, next) => {
 };
 
 export const authValidation = catchAsync(async (req, res, next) => {
-  
+  console.log('auth...');
   let token;
   
   if (req.cookies.token) {

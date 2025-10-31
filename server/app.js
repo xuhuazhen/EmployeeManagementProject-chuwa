@@ -15,6 +15,8 @@ import userRouter from "./routers/userRouter.js";
 import hrRouter from "./routers/hrRouter.js";
 import fileRouter from "./routers/fileRouter.js";
 import onboardingRouter from "./routers/onboardingRouter.js";
+//本地的uploads folder
+const uploadsDir = path.join(process.cwd(), "uploads");
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -65,8 +67,9 @@ app.get("/", (req, res) => {
 // 路由（注意这里仅写“路径片段”，不要写完整 URL）
 app.use("/api/user", userRouter);
 app.use("/api/hr", hrRouter);
-app.use("api/onboarding", onboardingRouter);
+app.use("/api/onboarding", onboardingRouter);
 app.use("/api/file", fileRouter);
+app.use('/api/files/raw', express.static(uploadsDir));
 
 // 404
 app.use((req, res, next) => {
