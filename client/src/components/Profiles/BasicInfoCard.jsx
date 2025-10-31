@@ -12,7 +12,7 @@ import UploadButton from "../Button/UploadButton";
 import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-export const BasicInfoCard = ({ mainForm, readOnly = false }) => {
+export const BasicInfoCard = ({ mainForm, setFile, readOnly = false }) => {
   const [preview, setPreview] = useState(null);  
   const location = useLocation;
 
@@ -47,7 +47,7 @@ export const BasicInfoCard = ({ mainForm, readOnly = false }) => {
             { tag: "profile-picture", url: URL.createObjectURL(file), file },
         ];
         mainForm.setFieldsValue({ documents: updatedDocs });
-
+        setFile(file);
         setPreview(URL.createObjectURL(file));
     };
   

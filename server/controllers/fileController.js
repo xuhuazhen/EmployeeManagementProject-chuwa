@@ -39,6 +39,7 @@ export const get_download = catchAsync(async (req, res) => {
 
 /** 上传头像：POST /api/file/upload/avatar */
 export const post_Avatar = catchAsync(async (req, res, next) => {
+  console.log(req)
   if (!req.file) return next(new AppError('No file uploaded', 400));
 
   // 这里一定不能用 findById；X-Demo-Userid 是 username

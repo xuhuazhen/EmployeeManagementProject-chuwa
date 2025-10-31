@@ -102,7 +102,7 @@ export const get_login = async (req, res, next) => {
       if (!currentUser) {
         return res.status(200).json({ isLogin: false });
       }
-
+      console.log('pass')
       //   currentUser.password = undefined;
       // THERE IS A LOGGED IN USER
       return res.status(200).json({

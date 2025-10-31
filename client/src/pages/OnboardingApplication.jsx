@@ -22,6 +22,7 @@ import {
   saveOnboardingMe,
   buildOnboardingPayload,
 } from "../api/onboardingApi"; //;
+import MainLayout from '../components/mainLayout/mainLayout';
 
 const { Title, Text } = Typography;
 
@@ -161,6 +162,7 @@ const OnboardingApplication = () => {
   };
 
   return (
+    <MainLayout>
     <div style={{ maxWidth: 1000, margin: '0 auto', padding: 24 }}>
       <Title level={3}>Onboarding Application</Title>
       <Text type="secondary">
@@ -421,6 +423,7 @@ const OnboardingApplication = () => {
         </Form.Item>
       </Form>
     </div>
+    </MainLayout>
   );
 };
 

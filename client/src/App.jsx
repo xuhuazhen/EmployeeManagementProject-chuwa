@@ -3,13 +3,11 @@ import OnboardingApplication from './pages/OnboardingApplication';
 
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import MainLayout from "./components/mainLayout/mainLayout";
-import { AuthGuardForSignup } from "./router/AuthGuard";
-import SignupPage from "./pages/Signup";
-import LoginPage from "./pages/Login";
-import Profiles from "./pages/Profiles/Profiles";
-import VisaManagement from "./pages/VisaManagement/VisaManagement";
+import { AuthGuardForSignup } from './router/AuthGuard';
+import SignupPage from './pages/Signup';
+import LoginPage from './pages/Login'; 
 import HiringManagement from "./pages/Hiring/HiringManagement";
-import Onboarding from "./pages/Onboarding";
+// import Onboarding from "./pages/Onboarding";
 import VisaManagement from "./pages/VisaManagement/VisaManagement";
 import HomePage from "./pages/Home";
 import Protected from "./router/Protected";
@@ -19,10 +17,10 @@ import ErrorPage from "./pages/ErrorPage"
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/onboarding" replace />} />
-        <Route path="/onboarding" element={<OnboardingApplication />} />
+        {/* <Route path="/" element={<Navigate to="/onboarding" replace />} /> */}
+        {/* <Route path="/onboarding" element={<OnboardingApplication />} /> */}
         {/* 之后加入publicroute */}
         <Route path="/login" element={
           <Protected>
@@ -30,24 +28,13 @@ export default function App() {
           </Protected>} 
         /> 
         <Route
-          path="/signup/*"
+          path='/signup/*'
           element={
             <AuthGuardForSignup>
               <SignupPage />
             </AuthGuardForSignup>
           }
         />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/profiles" element={<Profiles />} />
-        {/* <Route path="/profiles/:id" element={<EmployeeDetail />} /> */}
-        <Route path="/visamanagement" element={<VisaManagement />} />
-        <Route path="/hiringmanagement" element={<HiringManagement />} />
-      </Routes>
-    </Router>
-  );
-};
-
-export default App;
         {/* -----------员工页面 ----------*/}
         <Route path="/visa-status" 
           element={
@@ -63,9 +50,9 @@ export default App;
         />
         <Route path="/onboarding" 
           element={
-            // <Protected route="employee">
-              <Onboarding />
-            // </Protected>
+            <Protected route="employee">
+              <OnboardingApplication />
+            </Protected>
           } 
         />
         <Route path="/personal-info" 
@@ -106,6 +93,6 @@ export default App;
          {/* 错误页面 */}
         <Route path="*" element={<ErrorPage /> }></Route>  
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }
