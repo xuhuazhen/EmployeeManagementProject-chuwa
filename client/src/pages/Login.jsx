@@ -26,7 +26,7 @@ const LoginPage = () => {
             if (res.data.status === "success") {
                 const user = res.data.data.user; 
 
-                dispatch(login({ userID: user._id, username: user.username, role: user.role }));
+                dispatch(login({ userID: user._id, username: user.username, role: user.role, nextStep: user.nextStep }));
                 if (user.role === 'employee')  dispatch(storeInfo(user));
 
                 message.success('Welcome back!'); 

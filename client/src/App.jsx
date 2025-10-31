@@ -7,7 +7,7 @@ import { AuthGuardForSignup } from './router/AuthGuard';
 import SignupPage from './pages/Signup';
 import LoginPage from './pages/Login'; 
 import HiringManagement from "./pages/Hiring/HiringManagement";
-import Onboarding from "./pages/Onboarding";
+// import Onboarding from "./pages/Onboarding";
 import VisaManagement from "./pages/VisaManagement/VisaManagement";
 import HomePage from "./pages/Home";
 import Protected from "./router/Protected";
@@ -17,10 +17,10 @@ import ErrorPage from "./pages/ErrorPage"
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/onboarding" replace />} />
-        <Route path="/onboarding" element={<OnboardingApplication />} />
+        {/* <Route path="/" element={<Navigate to="/onboarding" replace />} /> */}
+        {/* <Route path="/onboarding" element={<OnboardingApplication />} /> */}
         {/* 之后加入publicroute */}
         <Route path="/login" element={
           <Protected>
@@ -50,9 +50,9 @@ export default function App() {
         />
         <Route path="/onboarding" 
           element={
-            // <Protected route="employee">
-              <Onboarding />
-            // </Protected>
+            <Protected route="employee">
+              <OnboardingApplication />
+            </Protected>
           } 
         />
         <Route path="/personal-info" 
@@ -93,6 +93,6 @@ export default function App() {
          {/* 错误页面 */}
         <Route path="*" element={<ErrorPage /> }></Route>  
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }

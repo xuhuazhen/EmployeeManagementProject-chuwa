@@ -43,7 +43,7 @@ const ErrorPage = () => {
                     <Button 
                         type="primary" 
                         key="console"
-                        onClick={() => navigate('/')}
+                        onClick={() => navigate('/home')}
                     >
                         Go Home
                     </Button>
