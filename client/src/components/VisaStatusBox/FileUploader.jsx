@@ -20,7 +20,7 @@ const FileUploader = ({ tag, setFile, setFileStatus }) => {
     setProgress(0); // Reset progress to 0
 
     const formData = new FormData();  
-    formData.append("document", selectedFile);
+    formData.append("file", selectedFile);
     formData.append("tag", tag);  
     
     console.log(selectedFile, formData.entries())
@@ -56,7 +56,7 @@ const FileUploader = ({ tag, setFile, setFileStatus }) => {
 
   return ( 
     <>
-      <UploadButton onFileSelect={setSelectedFile} />  
+      <UploadButton onFileSelect={setSelectedFile} type={"doc"}/>  
       {selectedFile && (
         <>
           <AppButton className={style.appButton}

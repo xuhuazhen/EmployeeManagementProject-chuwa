@@ -131,8 +131,9 @@ const VisaActionCell = ({ employee, mode }) => {
       ))}
 
       {/* Send notification if next step requires submission */}
-      {(employee.nextStep?.includes("waiting") ||
-        employee.nextStep?.includes("reject")) && (
+      {( employee.nextStep?.split("-")[0] !== "application"
+        && (employee.nextStep?.includes("waiting") || employee.nextStep?.includes("reject")))
+         && (
         <AppButton
           className={styles.buttonSend}
           onClick={handleSendNotification}

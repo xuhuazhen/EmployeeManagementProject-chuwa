@@ -8,13 +8,11 @@ import {
   Divider, 
 } from "antd"; 
 import { useEffect } from "react";
-import UploadButton from "../Button/UploadButton";
-import { useLocation } from "react-router-dom";
+import UploadButton from "../Button/UploadButton"; 
 import { useSelector } from "react-redux";
 
 export const BasicInfoCard = ({ mainForm, setFile, readOnly = false }) => {
-  const [preview, setPreview] = useState(null);  
-  const location = useLocation;
+  const [preview, setPreview] = useState(null);   
 
   const employee =  useSelector(state => state.employee)
   const GENDER_OPTIONS = [
@@ -71,7 +69,7 @@ export const BasicInfoCard = ({ mainForm, setFile, readOnly = false }) => {
                 style={{ width: 100, height: 100, objectFit: "cover", marginBottom: 8 }}
             />
             )}
-            {!readOnly && <UploadButton onFileSelect={handleFileSelect} isShow={false} />}
+            {!readOnly && <UploadButton onFileSelect={handleFileSelect} isShow={false} type={'img'}/>}
       </Form.Item>
 
         <Space size="large" wrap>
