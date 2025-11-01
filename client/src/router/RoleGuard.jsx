@@ -1,49 +1,43 @@
-// client/src/router/RoleGuard.jsx
-import { useSelector } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useSelector } from 'react-redux';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const RoleGuard = ({ allowedRole, children }) => {
-  const auth = useSelector((s) => s.auth);
+  const user = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    if (!auth.isLoggedIn) return; // 未登录交给 AuthGuard 处理
-
-    // 角色拦截
-    if (allowedRole && allowedRole !== auth.role) {
-      if (auth.role === "hr") navigate("/hr/home", { replace: true });
-      else navigate("/home", { replace: true });
+    console.log("chekcing user role ......", user.role);
+    // 如果角色不匹配，直接拦截
+    if (user.isLoggedIn && allowedRole && allowedRole !== user.role) {
+      navigate('/err');
       return;
     }
-
-    // 员工自动导向
-    if (auth.role === "employee") {
-      const ns = auth.nextStep || "";
-      const stage = ns.includes("-") ? ns.split("-")[0] : null;
-
-      if (stage === "application") {
-        if (location.pathname !== "/onboarding") {
-          navigate("/onboarding", { replace: true });
-        }
-        return;
-      }
-
-      // 默认落到 /home
-      if (["/login", "/"].includes(location.pathname)) {
-        navigate("/home", { replace: true });
-      }
-      return;
-    }
-
-    // HR 默认首页
-    if (auth.role === "hr") {
-      if (location.pathname === "/" || location.pathname === "/login") {
-        navigate("/hr/home", { replace: true });
+    // employee的登录后导向逻辑
+    if (user.role === 'employee') {
+      const nextStep = user.nextStep?.split('-')[0];
+      console.log(user.nextStep);
+      switch (nextStep) {
+        case 'application':
+            navigate('/onboarding');
+          break;
+        default:
+          if (['/login', '/'].includes(location.pathname)) {
+            navigate('/home');
+          }
+          break;
       }
     }
-  }, [auth.isLoggedIn, auth.role, auth.nextStep, location.pathname, navigate, allowedRole]);
+
+    // HR的默认跳转逻辑
+    if (user.role === 'hr') {
+      if (location.pathname === '/' || location.pathname === '/login') {
+        console.log("redirect..");
+        navigate('/hr/home');
+      }
+    }
+  }, [user.role, user.nextStep, user.isLoggedIn, navigate]);
 
   return children;
 };
