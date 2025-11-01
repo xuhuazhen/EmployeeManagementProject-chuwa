@@ -28,7 +28,7 @@ const AuthGuard = ({ children }) => {
       if (response.data.isLogin) {
         // 已登录保存当前登录的user信息
         if (!user.userID) {
-            dispatch(login({ userID: curUser._id, username: curUser.username, role: curUser.role, nextStep: curUser.nextStep }));
+            dispatch(login({ userID: curUser.userId, username: curUser.username, role: curUser.role, nextStep: curUser.nextStep }));
             console.log('dispatch')
             if (curUser.role === 'employee')  dispatch(initUserThunk(curUser.userId));
         } 

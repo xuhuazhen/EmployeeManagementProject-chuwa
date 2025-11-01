@@ -39,20 +39,22 @@ export const get_download = catchAsync(async (req, res) => {
 
 /** 上传头像：POST /api/file/upload/avatar */
 export const post_Avatar = catchAsync(async (req, res, next) => {
-  console.log(req)
   if (!req.file) return next(new AppError('No file uploaded', 400));
-
-  // 这里一定不能用 findById；X-Demo-Userid 是 username
-  const username = getUserKey(req);
-  const user = await User.findOne({ username });
+  const userId = req.user.userId; 
+  
+  const user = await User.findById(userId);
   if (!user) return next(new AppError('User not found', 404));
 
   const url = makePublicUrl(req.file.filename);
 
-  // upsert Document(tag='profile-picture')
-  let doc = await Document.findOne({ _id: { $in: user.documents }, tag: 'profile-picture' });
+  // upsert Document(tag='profile-picture')// 获取用户所有文档
+  const docs = await Document.find({ _id: { $in: user.documents } }); 
+  // 查找头像文档
+  let doc = docs.find(d => d.tag === 'profile-picture');
+  console.log('FOUND DOC:', doc);
   if (doc) {
     doc.url = url;
+    doc.title = req.file.originalname,
     doc.status = 'pending';
     await doc.save();
   } else {
@@ -76,10 +78,11 @@ export const post_document = catchAsync(async (req, res, next) => {
   // 兼容 query.label / body.tag 两种写法
   const raw = req.query.label || req.body.tag;
   const tag = normalizeLabel(raw);
+  console.log(raw, req.body.tag)
   if (!tag) return next(new AppError(`Invalid label: ${raw}`, 400));
 
-  const username = getUserKey(req);
-  const user = await User.findOne({ username }).populate('documents');
+  const user = await User.findById(req.user.userId);
+  // const user = await User.findOne({ username }).populate('documents');
   if (!user) return next(new AppError('User not found', 404));
 
   const url = makePublicUrl(req.file.filename);

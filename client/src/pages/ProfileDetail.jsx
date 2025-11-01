@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Card, message, Modal, Space  } from "antd";
-import dayjs from 'dayjs';
 import { useParams } from "react-router-dom";
 import { AddressCard } from "../components/Profiles/AddressCard"; 
 import { BasicInfoCard } from "../components/Profiles/BasicInfoCard";
@@ -16,7 +15,8 @@ import LoadingSpin from "../components/LoadingSpin/loadingSpin";
 import MainLayout from "../components/mainLayout/mainLayout";
 import { mapProfileToFormData } from "../utils/mapProfileToFormData";
 import { storeInfo } from "../slices/employeeSlice";
-import { uploadAvatar } from "../api/onboardingApi";
+import { uploadAvatar } from "../api/onboardingApi"; 
+
 export default function ProfileDetailPage({ mode }) {
   // mode: "hr" | "employee"
   const [form] = Form.useForm();
@@ -28,22 +28,22 @@ export default function ProfileDetailPage({ mode }) {
   const e =  useSelector(state => state.employee);
   const dispatch = useDispatch();
 
-    // mode: "hr"获取数据
-    const { id } = useParams();
-    useEffect (() => {
-        console.log('CURRENT MODE:', mode)
-        if (mode === "hr" && id) {
-        setLoading(true);
-        api.get(`/user/profile/${id}`)
-            .then((res) => {
-            dispatch(storeInfo(res.data.data)); //store current picked userinfo
-            const formData = mapProfileToFormData(res.data.data);
-            setUserData(formData);
-            form.setFieldsValue(formData);
-            })
-            .finally(() => setLoading(false));
-        }  
-    }, [id]);
+  // mode: "hr"获取数据
+  const { id } = useParams();
+  useEffect (() => {
+    console.log('CURRENT MODE:', mode)
+    if (mode === "hr" && id) {
+      setLoading(true);
+      api.get(`/user/profile/${id}`)
+        .then((res) => {
+          dispatch(storeInfo(res.data.data)); //store current picked userinfo
+          const formData = mapProfileToFormData(res.data.data);
+          setUserData(formData);
+          form.setFieldsValue(formData);
+        })
+        .finally(() => setLoading(false));
+    }  
+  }, [id]);
 
   // mode: "employee"获取数据
   useEffect(() => {
@@ -54,25 +54,28 @@ export default function ProfileDetailPage({ mode }) {
       setUserData(formData);
       form.setFieldsValue(formData);
     }
-    }, [e]);
+  }, [e]);
 
   const handleSave  = async () => {
     try {
         const values = await form.validateFields(); 
 
-        // 提取头像文件
+        // // 提取头像文件
         const avatarPromise = file
           ? uploadAvatar(file).then(res => {
-              file.url = res.data.url; // 更新 URL
+            console.log(res)
+              file.url = res.data.url; // 更新URL
             })
           : Promise.resolve(); 
 
         //update form
-        const patchPromise = await api.patch(`/user/profile/${user.userID}`, values);
-            
-        
+        delete values.documents;
+        const patchPromise = api.patch(`/user/profile/${user.userID}`, { data : values });
+      
         const [patchRes] = await Promise.all([patchPromise, avatarPromise]);
+        
         dispatch(storeInfo(patchRes.data.data)); //store current picked userinfo 
+
         message.success("Profile saved successfully!");
         setEditing(false);
     } catch (err) {

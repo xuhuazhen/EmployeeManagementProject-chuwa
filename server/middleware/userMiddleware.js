@@ -105,7 +105,7 @@ export const authValidation = catchAsync(async (req, res, next) => {
 });
 
 export const applicationStatusValidation = (req, res, next) => {
-  console.log(req.user, req.user.nextStep)
+  console.log('checking application status...', req.user.nextStep)
   const nextStep = req.user.nextStep;
   if (nextStep.split('-')[0] === 'application') {
     return next(
