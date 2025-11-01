@@ -112,16 +112,23 @@ export const get_employees = catchAsync(async (req, res) => {
 
   const conditions = [{ role: "employee" }];
 
-  // nextStep filters
-  if (status) conditions.push({ nextStep: { $in: status.split(",") } });
+  //filterout all those who has not regitered (havent use the token for registration yet)
+  conditions.push({ nextStep: { $ne: "application-waiting" } });
 
-  if (inProgressIncomplete === "true")
-    conditions.push({ nextStep: { $ne: "all-done" } });
+  //Filter all those employees who has submitted the application but has not been approved by all F1 files
+  if (inProgressIncomplete === "true") {
+    conditions.push({
+      nextStep: { $nin: ["all-done", "application-waiting"] },
+    });
+  }
 
-  // visa filter
+  // visa filter (used for visa page -ALL)
   if (visa === "F1") {
     conditions.push({ "employment.isF1": true });
   }
+  // filter by application status (used in Onboarding Application Review)
+  if (status)
+    conditions.push({ "application.status": { $in: status.split(",") } });
 
   // search filter (safe for missing personalInfo)
   if (search) {

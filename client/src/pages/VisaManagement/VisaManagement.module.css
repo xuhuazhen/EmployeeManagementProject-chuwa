@@ -32,6 +32,8 @@
 .buttonSend {
   font-size: 12px;
   padding: 6px 12px;
+  min-width: 130px;
+  text-align: center;
 }
 
 @media (max-width: 768px) {
@@ -46,6 +48,13 @@
   }
 
   .total {
+    text-align: center;
+  }
+  .buttonView,
+  .buttonSend {
+    font-size: 12px;
+    padding: 2px 4px;
+    width: 100%;
     text-align: center;
   }
 }

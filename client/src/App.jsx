@@ -14,6 +14,7 @@ import Protected from "./router/Protected";
 import VisaStatusPage from "./pages/VisaStatus";
 import ProfileDetailPage from "./pages/ProfileDetail";
 import ErrorPage from "./pages/ErrorPage";
+import Profiles from "./pages/Profiles/Profiles";
 
 export default function App() {
   return (
@@ -58,9 +59,9 @@ export default function App() {
         <Route
           path="/onboarding"
           element={
-            // <Protected route="employee">
-            <Onboarding />
-            // </Protected>
+            <Protected route="employee">
+              <OnboardingApplication />
+            </Protected>
           }
         />
         <Route
@@ -106,25 +107,13 @@ export default function App() {
           }
         />
         <Route
-          path="/hr/profiles"
+          path="/hr/application/:id"
           element={
             <Protected route="hr">
-              <Profiles />
+              <ProfileDetailPage mode={"hr"} />
             </Protected>
           }
         />
-        {/* 错误页面 */}
-        <Route path="*" element={<ErrorPage />}></Route>
-        <Route
-          path="/hr/profiles"
-          element={
-            <Protected route="hr">
-              <Profiles />
-            </Protected>
-          }
-        />
-        {/* 错误页面 */}
-        <Route path="*" element={<ErrorPage />}></Route>
         <Route
           path="/hr/profiles"
           element={

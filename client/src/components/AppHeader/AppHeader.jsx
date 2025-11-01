@@ -1,4 +1,4 @@
-import { Layout, Typography, Grid, message} from "antd";
+import { Layout, Typography, Grid, message } from "antd";
 import Navbar from "../Nav/Navbar";
 import styles from "./AppHeader.module.css";
 import AppButton from "../Button/AppButton";
@@ -34,7 +34,7 @@ const AppHeader = () => {
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const user = useSelector((state) => state.auth);
-  const navLinks = user.isLoggedIn ? NAV_ITEMS[user.role] || [] : []; 
+  const navLinks = user.isLoggedIn ? NAV_ITEMS[user.role] || [] : [];
 
   const handleClick = async () => {
     console.log("click");
@@ -50,16 +50,16 @@ const AppHeader = () => {
     } catch (err) {
       console.log(err);
     }
-  }
+  };
 
   return (
     <Header className={styles.header}>
       <div className={styles.topRow}>
-        <Text className={styles.logo} onClick={() => navigate('/login')}>
+        <Text className={styles.logo} onClick={() => navigate("/login")}>
           {!isMobile ? "Employee" : "E"}
           <span> Management</span>
         </Text>
-        { user.isLoggedIn && isMobile && (
+        {user.isLoggedIn && isMobile && (
           <div
             className={styles.menuToggle}
             onClick={() => {
@@ -71,17 +71,16 @@ const AppHeader = () => {
           </div>
         )}
       </div>
-      { user.isLoggedIn && 
+      {user.isLoggedIn && (
         <Navbar isOpen={isOpen}>
-            { navLinks.map((link) => (
-              <Link key={link.path} onClick={() => navigate(link.path)}>
-                {link.label}
-              </Link>
-              ))
-            }
+          {navLinks.map((link) => (
+            <Link key={link.path} onClick={() => navigate(link.path)}>
+              {link.label}
+            </Link>
+          ))}
           <AppButton handleClick={handleClick}> Logout </AppButton>
         </Navbar>
-      }
+      )}
     </Header>
   );
 };

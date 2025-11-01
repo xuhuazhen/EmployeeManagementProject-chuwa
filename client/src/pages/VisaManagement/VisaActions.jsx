@@ -17,9 +17,17 @@ const VisaActionCell = ({ employee, mode }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [notificationSent, setNotificationSent] = useState(false);
 
-  // Pending documents for approval
-  const pendingDocs =
-    employee.documents?.filter((doc) => doc.status === "pending") || [];
+  //Filtering the documents
+  const documentsToShow =
+    mode === "in-progress"
+      ? employee.documents?.filter(
+          (doc) =>
+            doc.status === "pending" &&
+            doc.tag !== "profile-picture" &&
+            doc.tag !== "driver-license" &&
+            employee.nextStep?.includes("pending")
+        )
+      : employee.documents?.filter((doc) => doc.tag !== "profile-picture");
 
   // Open document modal
   const openPreview = (doc) => {
@@ -95,10 +103,11 @@ const VisaActionCell = ({ employee, mode }) => {
     return (
       <Space direction="vertical">
         {employee.documents?.length
-          ? employee.documents.map((doc) => (
+          ? documentsToShow.map((doc) => (
               <Space key={doc._id}>
                 <Link type="link" onClick={() => openPreview(doc)}>
-                  {doc.title}
+                  {doc.tag}
+                  {/* {doc.title} */}
                 </Link>
                 <DownloadOutlined
                   onClick={() => handleDownload(doc.url, doc.title)}
@@ -120,27 +129,27 @@ const VisaActionCell = ({ employee, mode }) => {
   return (
     <Space direction="horizontal">
       {/* Pending documents */}
-      {pendingDocs.map((doc) => (
+      {documentsToShow.map((doc) => (
         <AppButton
           className={styles.buttonView}
           key={doc._id}
           onClick={() => openPreview(doc)}
         >
-          {doc.title}
+          {doc.tag}
+          {/* {doc.title} */}
         </AppButton>
       ))}
-
-      {/* Send notification if next step requires submission */}
-      {(employee.nextStep?.includes("waiting") ||
-        employee.nextStep?.includes("reject")) && (
-        <AppButton
-          className={styles.buttonSend}
-          onClick={handleSendNotification}
-          disabled={notificationSent}
-        >
-          {notificationSent ? "Notification Sent" : "Send Notification"}
-        </AppButton>
-      )}
+      {employee.nextStep?.split("-")[0] !== "application" &&
+        (employee.nextStep?.includes("waiting") ||
+          employee.nextStep?.includes("reject")) && (
+          <AppButton
+            className={styles.buttonSend}
+            onClick={handleSendNotification}
+            disabled={notificationSent}
+          >
+            {notificationSent ? "Notification Sent" : "Send Notification"}
+          </AppButton>
+        )}
       <DocumentReviewModal
         visible={isModalVisible}
         document={previewDoc}
