@@ -12,7 +12,7 @@ import VisaManagement from "./pages/VisaManagement/VisaManagement";
 import HomePage from "./pages/Home";
 import Protected from "./router/Protected";
 import VisaStatusPage from "./pages/VisaStatus";
-import ProfileDetailPage from "./pages/ProfileDetail";
+import ProfileDetailPage from "./pages/ProfileDetail/ProfileDetail";
 import ErrorPage from "./pages/ErrorPage"
 import Profiles from './pages/Profiles/Profiles';
 
