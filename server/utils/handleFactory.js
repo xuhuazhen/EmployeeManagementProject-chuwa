@@ -37,9 +37,9 @@ export const getOne = (Model, popOptions, selectString) =>
   export const updateOne = (Model, popOptions) =>
   catchAsync(async (req, res, next) => {
     let id = req.params.id;
-    console.log(id)
 
     const updateFields = req.body.data;
+    console.log('updateOne:',  req.body.data)
     const update = {};
     if (updateFields) {
       for (const [key, value] of Object.entries(updateFields)) {
@@ -67,7 +67,7 @@ export const getOne = (Model, popOptions, selectString) =>
     if (!doc) {
       return next(new AppError('No document found with that ID', 404));
     }
-    console.log("UPDATED:", doc);
+    // console.log("UPDATED:", doc);
 
     res.status(200).json({
       status: 'success',

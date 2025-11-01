@@ -92,6 +92,13 @@ export default function App() {
             </Protected>} 
         />
         <Route 
+          path='/hr/application/:id'
+          element={
+            <Protected route="hr">
+              <ProfileDetailPage mode={"hr"} />
+            </Protected>} 
+        />
+        <Route 
           path='/hr/profiles'
           element={
             <Protected route="hr">
