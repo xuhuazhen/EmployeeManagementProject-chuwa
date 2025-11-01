@@ -5,10 +5,21 @@ export const getAll = (Model, popOptions, selectString) =>
   catchAsync(async (req, res, next) => {
     let query = Model.find();
     if (popOptions) query = query.populate(popOptions).select(selectString);
-    const doc = await query;
+    let doc = await query;
 
     if (!doc) {
       return next(new AppError('No document found with that ID', 404));
+    } 
+
+    if (Model.modelName === 'SignupToken') {
+      doc = doc.map(d => {
+        const res = d.toObject();
+        delete res.token;
+          return {
+            ...res,
+            link: `http://localhost:5173/signup/${d.token}`,
+          };
+      }); 
     }
 
     res.status(200).json({
