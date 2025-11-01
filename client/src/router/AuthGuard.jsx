@@ -49,7 +49,31 @@ const AuthGuard = ({ children }) => {
   useEffect(() => { 
     checkLoginStatus();
   }, [checkLoginStatus]);
+
+  // //登录状态变化时处理跳转逻辑
+  // useEffect(() => {
+  //   if (!isLoading) {
+  //       if (!user.isLoggedIn) {
+  //       // 未登录的情况下，除 signup 外都跳回 login
+  //           if (location.pathname !== '/signup') navigate('/login');
+  //           return;
+  //       }
+        
+  //       const nextStep = user.nextStep?.split('-')[0];
+  //       switch (nextStep) {
+  //         case 'application':
+  //           navigate('/onboarding'); 
+  //           break;
+  //         default:
+  //           if (['/login', '/'].includes(location.pathname)) {
+  //             navigate('/home'); // Default redirect for logged-in users
+  //           }
+  //           break;
+  //       }
  
+  //   }
+  // }, [user, isLoading, user.nextStep, location.pathname, navigate]);
+
   if (isLoading) {
     return <LoadingSpin />
   }
