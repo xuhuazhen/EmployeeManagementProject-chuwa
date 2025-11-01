@@ -48,6 +48,7 @@ export const post_sendEmail = catchAsync(async (req, res, next) => {
   }
 });
 
+// hr/history
 export const get_tokenHistory = getAll(SignupToken);
 
 export const post_sendNotificationEmail = catchAsync(async (req, res, next) => {

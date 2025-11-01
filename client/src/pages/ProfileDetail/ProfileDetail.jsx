@@ -1,21 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Card, message, Modal, Space  } from "antd";
-import { useParams } from "react-router-dom";
-import { AddressCard } from "../components/Profiles/AddressCard"; 
-import { BasicInfoCard } from "../components/Profiles/BasicInfoCard";
-import { ContactInfoCard } from "../components/Profiles/ContactInfoCard";
-import { EmploymentCard } from "../components/Profiles/EmploymentCard"; 
-import ReferenceCard from "../components/Profiles/ReferenceCard";
-import DocumentsCard from "../components/Profiles/DocumentsCard"; 
+import { useLocation, useParams } from "react-router-dom";
+import { AddressCard } from "../../components/Profiles/AddressCard"; 
+import { BasicInfoCard } from "../../components/Profiles/BasicInfoCard";
+import { ContactInfoCard } from "../../components/Profiles/ContactInfoCard";
+import { EmploymentCard } from "../../components/Profiles/EmploymentCard"; 
+import ReferenceCard from "../../components/Profiles/ReferenceCard";
+import DocumentsCard from "../../components/Profiles/DocumentsCard"; 
 
-import api from "../api/axiosConfig";
+import api from "../../api/axiosConfig";
 import { useDispatch, useSelector } from "react-redux";
-import EmergencyContactList from "../components/Profiles/EmergencyContactList";
-import LoadingSpin from "../components/LoadingSpin/loadingSpin";
-import MainLayout from "../components/mainLayout/mainLayout";
-import { mapProfileToFormData } from "../utils/mapProfileToFormData";
-import { storeInfo } from "../slices/employeeSlice";
-import { uploadAvatar } from "../api/onboardingApi"; 
+import EmergencyContactList from "../../components/Profiles/EmergencyContactList";
+import LoadingSpin from "../../components/LoadingSpin/loadingSpin";
+import MainLayout from "../../components/mainLayout/mainLayout";
+import { mapProfileToFormData } from "../../utils/mapProfileToFormData";
+import { storeInfo } from "../../slices/employeeSlice";
+import { uploadAvatar } from "../../api/onboardingApi"; 
+
+import styles from './profileDetail.module.css';
 
 export default function ProfileDetailPage({ mode }) {
   // mode: "hr" | "employee"
@@ -24,16 +26,21 @@ export default function ProfileDetailPage({ mode }) {
   const [loading, setLoading] = useState(mode === "hr"); // hr 初始需要 fetch
   const [userData, setUserData] = useState(null);
   const [file, setFile] = useState(null);
+  const [title, setTitle] = useState('');
+
   const user =  useSelector(state => state.auth);
   const e =  useSelector(state => state.employee);
   const dispatch = useDispatch();
+  const location = useLocation();
 
   // mode: "hr"获取数据
   const { id } = useParams();
   useEffect (() => {
-    console.log('CURRENT MODE:', mode)
     if (mode === "hr" && id) {
       setLoading(true);
+
+      setTitle(location.pathname.includes("/application") ? 'Application' : 'Employee Profile');
+
       api.get(`/user/profile/${id}`)
         .then((res) => {
           dispatch(storeInfo(res.data.data)); //store current picked userinfo
@@ -43,12 +50,13 @@ export default function ProfileDetailPage({ mode }) {
         })
         .finally(() => setLoading(false));
     }  
-  }, [id]);
+  }, [id, location.pathname]);
 
   // mode: "employee"获取数据
   useEffect(() => {
     if (mode === "employee") {
       // employee 使用 store 的数据  
+      setTitle('My Profile');
       const formData = mapProfileToFormData(e.employee);
     
       setUserData(formData);
@@ -104,9 +112,11 @@ export default function ProfileDetailPage({ mode }) {
 
   return (
     <MainLayout>
-        <h2 style={{marginBottom: '30px', marginLeft: '30px'}}> {mode !== "hr" ? "My Profile" : "Employee Profile Detail"} </h2>
+        <h2 style={{marginBottom: '30px', marginLeft: '30px'}}> {title} </h2>
         <Card style={{ maxWidth: 980, margin: "0 auto", padding: 16 }}>
-        <Form form={form} layout="vertical">
+        <Form form={form} layout="vertical" 
+            className={mode === "hr" || !editing ? styles.readonlyInput : ""}
+        >
             <BasicInfoCard mainForm={form} setFile={setFile} readOnly={mode === "hr" || !editing} />
             <AddressCard form={form} readOnly={mode === "hr" || !editing} />
             <ContactInfoCard form={form} readOnly={mode === "hr" || !editing} />

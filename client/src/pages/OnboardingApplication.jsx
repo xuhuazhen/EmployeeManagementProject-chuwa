@@ -28,7 +28,6 @@ import {
 } from "../api/onboardingApi";
 
 import MainLayout from '../components/mainLayout/mainLayout';
-import { useSelector } from 'react-redux';
 
 const { Title, Text } = Typography;
 
@@ -112,12 +111,52 @@ const DocUploadButton = ({ label, children, disabled }) => {
 
 const OnboardingApplication = () => {
   const [form] = Form.useForm();
-  const auth = useSelector(state => state.auth);
-  const employee = useSelector(state => state.employee);
-  
-  // 回显（若后端已有数据）
+  const auth = useSelector((state) => state.auth);
+
+  const [justLocked, setJustLocked] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState('');
+
+  // live watchers for conditional UI
+  const isCitizenOrPR = Form.useWatch('isCitizenOrPR', form); // boolean
+  const visaType = Form.useWatch('visaType', form);           // 'citizen' | 'green-card' | 'f1-opt' | 'h1b' | 'h4' | 'other'
+  const hasReferral = Form.useWatch('hasReferral', form);     // boolean
+
+  // derive current application stage/lock from auth.nextStep
+  const [appStage, appStatus] = useMemo(() => {
+    const ns = auth?.nextStep || '';
+    const i = ns.indexOf('-');
+    return i > -1 ? [ns.slice(0, i), ns.slice(i + 1)] : [null, null];
+  }, [auth?.nextStep]);
+
+  // locked when application is pending or rejected (your rule)
+  const appDisabled = useMemo(
+    () => appStage === 'application' && ['pending', 'reject'].includes(appStatus),
+    [appStage, appStatus]
+  );
+  const disabledAll = appDisabled || justLocked;
+
+  /** ---- CONDITIONAL DOCUMENT MATRIX (front-end only) ----
+   * citizen / green-card : NO uploads
+   * f1-opt               : driver-license + opt-receipt
+   * h1b / h4 / other     : driver-license only
+   */
+  const docLabels = useMemo(() => {
+    // if user explicitly indicates PR/citizen OR picked visaType accordingly -> no docs
+    if (isCitizenOrPR === true || visaType === 'citizen' || visaType === 'green-card') {
+      return [];
+    }
+    if (visaType === 'f1-opt') {
+      return ['driver-license', 'opt-receipt'];
+    }
+    // default set
+    return ['driver-license'];
+  }, [isCitizenOrPR, visaType]);
+
+  // fetch initial data for echoing values
   useEffect(() => {
-        const data = employee.employee;
+    (async () => {
+      try {
+        const { data } = await getOnboardingMe();
         if (!data) return;
 
         // avatar from documents

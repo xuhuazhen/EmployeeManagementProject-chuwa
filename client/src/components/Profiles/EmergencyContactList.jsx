@@ -60,7 +60,7 @@ export default function EmergencyContactList({ form, readOnly = false }) {
                   </Form.Item>
 
                   <Form.Item label="Middle Name" name={[field.name, "middleName"]}>
-                    <Input style={{ width: 200 }} readOnly={readOnly} />
+                    <Input style={{ width: 260 }} readOnly={readOnly} />
                   </Form.Item>
                 </Space>
 
