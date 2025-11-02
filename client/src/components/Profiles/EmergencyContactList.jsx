@@ -21,7 +21,7 @@ export default function EmergencyContactList({ form, readOnly = false }) {
           },
         ]}
       >
-{(fields, { add, remove }, { errors }) => (
+      {(fields, { add, remove }, { errors }) => (
           <>
             {fields.map((field, idx) => (
               <Card
