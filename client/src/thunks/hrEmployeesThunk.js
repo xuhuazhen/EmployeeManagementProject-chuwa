@@ -65,8 +65,8 @@ export const updateDocumentStatus = createAsyncThunk(
 export const sendNotification = createAsyncThunk(
   "employees/sendNotification",
   async (employeeId, { rejectWithValue }) => {
-    try {
-      return await sendNotificationAPI(employeeId);
+    try { 
+      return await sendNotificationAPI({employeeId});
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }

@@ -53,7 +53,7 @@ export const get_tokenHistory = getAll(SignupToken);
 
 export const post_sendNotificationEmail = catchAsync(async (req, res, next) => {
   const userId = req.params.userId;
-
+  console.log('sent to' , userId)
   //TODO: check email exist
 
   const user = await User.findById(userId)
