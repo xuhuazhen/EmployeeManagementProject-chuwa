@@ -1,28 +1,37 @@
+// src/components/Profiles/DocumentsCard.jsx
 import React from "react";
-import { Card, Divider, List, Button, Space } from "antd";
+import { Form, Card, Divider, List, Button, Space } from "antd";
 import { DownloadOutlined, EyeOutlined } from "@ant-design/icons";
 
-const VALID_TAGS = ["driver-license", "ead", "i20", "i983"];
+// 新增更多可识别的标签
+const DRIVER_TAGS = ["driver-license"];
+
+const WORK_AUTH_TAGS = [
+  "opt-receipt",
+  "ead",
+  "i983",
+  "i-983",          // 兼容可能的命名
+  "i20",
+  "i-20",           // 兼容可能的命名
+  "green-card",
+  "citizenship-proof",
+  "work-auth",
+];
 
 export default function DocumentsCard({ form }) {
-    
-    const documents = form.getFieldValue("documents") || [];
+  // ✅ 用 Form.useWatch，能联动刷新
+  const documents = Form.useWatch("documents", form) || [];
 
-  // Driver License 文件
-  const driverDocs = documents.filter((doc) => doc.tag === "driver-license");
-
-  // Work authorized 文件
-  const workDocs = documents.filter((doc) =>
-    ["ead", "i20", "i983"].includes(doc.tag)
-  );
+  const driverDocs = documents.filter((d) => DRIVER_TAGS.includes(d.tag));
+  const workDocs = documents.filter((d) => WORK_AUTH_TAGS.includes(d.tag));
 
   const renderFileList = (docs) => (
     <List
       grid={{ gutter: 16, column: 1 }}
       dataSource={docs}
       renderItem={(doc) => (
-        <List.Item key={doc._id}>
-          <Card size="small" title={doc.tag.toUpperCase() + ' File: ' + doc.title}>
+        <List.Item key={`${doc.tag}-${doc.title}`}>
+          <Card size="small" title={`${doc.tag.toUpperCase()} • ${doc.title || "file"}`}>
             <Space>
               <Button
                 type="link"
@@ -37,7 +46,7 @@ export default function DocumentsCard({ form }) {
                 onClick={() => {
                   const link = document.createElement("a");
                   link.href = doc.url;
-                  link.download = doc.title;
+                  link.download = doc.title || `${doc.tag}.file`;
                   link.click();
                 }}
               >
@@ -61,7 +70,7 @@ export default function DocumentsCard({ form }) {
 
       {workDocs.length > 0 && (
         <>
-          <Divider orientation="left">Work Authorized Files</Divider>
+          <Divider orientation="left">Work Authorization & Others</Divider>
           {renderFileList(workDocs)}
         </>
       )}
