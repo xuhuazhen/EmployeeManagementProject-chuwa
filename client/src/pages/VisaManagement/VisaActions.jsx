@@ -10,6 +10,7 @@ import AppButton from "../../components/Button/AppButton";
 import { DownloadOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import styles from "./VisaManagement.module.css";
+import DownloadButton from "../../components/Button/DownloadButton/DownloadButton";
 
 const VisaActionCell = ({ employee, mode }) => {
   const dispatch = useDispatch();
@@ -19,7 +20,7 @@ const VisaActionCell = ({ employee, mode }) => {
 
   // Pending documents for approval
   const pendingDocs =
-    employee.documents?.filter((doc) => doc.status === "pending") || [];
+    employee.documents?.filter((doc) => doc.status === "pending" && doc.tag === employee.nextStep.split("-")[0]) || [];
 
   // Open document modal
   const openPreview = (doc) => {
@@ -100,10 +101,11 @@ const VisaActionCell = ({ employee, mode }) => {
                 <Link type="link" onClick={() => openPreview(doc)}>
                   {doc.tag}
                 </Link>
-                <DownloadOutlined
+                {/* <DownloadOutlined
                   onClick={() => handleDownload(doc.url, doc.title)}
                   style={{ cursor: "pointer" }}
-                />
+                /> */}
+                <DownloadButton url={doc.url} />
               </Space>
             ))
           : "N/A"}

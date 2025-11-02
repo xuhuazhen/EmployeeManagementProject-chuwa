@@ -50,8 +50,43 @@ const VisaTable = ({ data, mode }) => {
         return <span style={{ color: "green" }}>{days} days</span>;
       },
     },
-    { title: "Next Step", dataIndex: "nextStep", key: "nextStep" },
+    {
+      title: "Next Step",
+      dataIndex: "nextStep",
+      key: "nextStep",
+      render: (nextStep) => {
+        switch (nextStep) {
+          case "application-pending":
+            return "Waiting for HR approval of OPT";
+          case "application-reject":
+            return "Waiting for employee to resubmit OPT";
+          case "ead-waiting":
+            return "Waiting for employee to submit EAD";
+          case "ead-pending":
+            return "Waiting for HR approval of EAD";
+          case "ead-reject":
+            return "Waiting for employee to resubmit EAD";
+          case "i20-waiting":
+            return "Waiting for employee to submit I-20";
+          case "i20-pending":
+            return "Waiting for HR approval of I-20";
+          case "i20-reject":
+            return "Waiting for employee to resubmit I-20";
+          case "i983-waiting":
+            return "Waiting for employee to submit I-983";
+          case "i983-pending":
+            return "Waiting for HR approval of I-983";
+          case "i983-reject":
+            return "Waiting for employee to resubmit I-983";
+          case "all-done":
+            return "All steps completed";
+          default:
+            return nextStep || "—";
+        }
+      },
+    }
   ];
+
   columns.push({
     title: mode === "all" ? "Documents" : "Action",
     key: "action",
