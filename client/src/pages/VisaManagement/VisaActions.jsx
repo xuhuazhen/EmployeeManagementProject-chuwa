@@ -38,6 +38,7 @@ const VisaActionCell = ({ employee, mode }) => {
     try {
       await dispatch(
         updateDocumentStatus({
+          userId: employee._id,
           docId: doc._id,
           status: "approved",
           feedback: "",
@@ -55,6 +56,7 @@ const VisaActionCell = ({ employee, mode }) => {
     try {
       await dispatch(
         updateDocumentStatus({
+          userId: employee._id,
           docId: doc._id,
           status: "rejected",
           feedback,
