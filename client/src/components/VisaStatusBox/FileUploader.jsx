@@ -56,7 +56,7 @@ const FileUploader = ({ tag, setFile, setFileStatus }) => {
 
   return ( 
     <>
-      <UploadButton onFileSelect={setSelectedFile} type={"doc"}/>  
+      <UploadButton onFileSelect={setSelectedFile} type={"doc"}  />  
       {selectedFile && (
         <>
           <AppButton className={style.appButton}

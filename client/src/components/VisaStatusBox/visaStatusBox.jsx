@@ -7,8 +7,8 @@ const { Text, Title } = Typography;
  
 const fileMapping = {
   ead: "Application",
-  i983: "EAD Document",
-  i20: "I-983 Document",
+  i20: "EAD Document",
+  i983: "I20 Document",
 };
 const SAMPLE_FILE_URL = "https://ontheline.trincoll.edu/images/bookdown/sample-local-pdf.pdf";
 

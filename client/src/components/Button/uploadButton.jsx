@@ -1,6 +1,6 @@
 import { Upload, Button, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-
+ 
 // props: onChange 回调会收到 file 对象
 const UploadButton = ({ onFileSelect, isShow = true, type = "any" }) => { 
    const acceptMap = {
@@ -34,8 +34,7 @@ const UploadButton = ({ onFileSelect, isShow = true, type = "any" }) => {
 
   return ( 
     <Upload 
-      accept={acceptMap[type]}
-      style={{ maxWidth: 300 }}
+      accept={acceptMap[type]} 
       beforeUpload={beforeUpload} // 阻止自动上传
       onChange={({ file }) => {
         // onChange 中的 file.originFileObj 才是原生 File
@@ -45,7 +44,9 @@ const UploadButton = ({ onFileSelect, isShow = true, type = "any" }) => {
       onRemove={() => onFileSelect(null)}
       showUploadList={{ showRemoveIcon: isShow }}
     >
-      <Button icon={<UploadOutlined />}>
+      <Button 
+        style={{color: 'white', backgroundColor: "#4472CA"}} 
+        icon={<UploadOutlined />}>
         Select file
       </Button>
     </Upload> 
