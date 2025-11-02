@@ -68,7 +68,7 @@ export const post_sendNotificationEmail = catchAsync(async (req, res, next) => {
   const status = user.nextStep.split("-")[1];
 
   const fileMapping = {
-    ead: "Application",
+    ead: "OPT Document",
     i983: "EAD Document",
     i20: "I-983 Document",
   };

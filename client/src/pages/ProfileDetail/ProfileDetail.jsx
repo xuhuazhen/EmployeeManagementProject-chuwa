@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Button, Card, message, Modal, Space  } from "antd";
+import { Form, Button, Card, message, Modal, Space, Divider } from "antd";
 import { useLocation, useParams } from "react-router-dom";
 import { AddressCard } from "../../components/Profiles/AddressCard"; 
 import { BasicInfoCard } from "../../components/Profiles/BasicInfoCard";
@@ -22,7 +22,7 @@ import styles from './profileDetail.module.css';
 export default function ProfileDetailPage({ mode }) {
   // mode: "hr" | "employee"
   const [form] = Form.useForm();
-  const [editing, setEditing] = useState(false); // employee 默认可编辑
+  const [editing, setEditing] = useState(false); // employee 默认可编辑. hr根据当前申请人状态判断是否可以approve/reject
   const [loading, setLoading] = useState(mode === "hr"); // hr 初始需要 fetch
   const [userData, setUserData] = useState(null);
   const [file, setFile] = useState(null);
@@ -39,13 +39,17 @@ export default function ProfileDetailPage({ mode }) {
     if (mode === "hr" && id) {
       setLoading(true);
 
-      setTitle(location.pathname.includes("/application") ? 'Application' : 'Employee Profile');
+      setTitle(location.pathname.includes("/application") ? 'Application Review' : 'Employee Profile');
 
       api.get(`/user/profile/${id}`)
         .then((res) => {
           dispatch(storeInfo(res.data.data)); //store current picked userinfo
+          //判断这个目前emplouyee的申请状态
+          if (res.data.data.nextStep.split("-")[1] === 'pending') setEditing(true);
+          console.log(editing);
           const formData = mapProfileToFormData(res.data.data);
           setUserData(formData);
+
           form.setFieldsValue(formData);
         })
         .finally(() => setLoading(false));
@@ -108,6 +112,14 @@ export default function ProfileDetailPage({ mode }) {
     });
     };
 
+  const handleApprove = () => {
+    console.log('approve');
+  }
+
+  const handleReject = () => {
+    console.log('reject 打开feedback');
+  }
+
   if (loading || !userData) return <LoadingSpin />
 
   return (
@@ -144,6 +156,22 @@ export default function ProfileDetailPage({ mode }) {
                 )}
             </Space>
             )}
+            
+            {mode === "hr" && location.pathname.includes("/application") && editing && (
+              <>
+                <Divider orientation="left"> </Divider>
+
+                <Space style={{ marginTop: 16 }}> 
+                    <Button type="primary" onClick={handleApprove}>
+                      Approve
+                    </Button>
+                    <Button type="primary" onClick={handleReject}>
+                      Reject
+                    </Button>  
+                </Space>
+              </>
+            )}
+            
         </Form>
         </Card>
     </MainLayout>

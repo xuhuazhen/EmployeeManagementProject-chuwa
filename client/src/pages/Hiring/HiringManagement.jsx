@@ -139,7 +139,7 @@ const HiringManagement = () => {
           key: "name",
           render: (_, record) => (
             <a
-              onClick={() => navigate(`/hr/profiles/${record._id}`)}
+              onClick={() => navigate(`/hr/application/${record._id}`)}
               style={{ color: "#1677ff", cursor: "pointer" }}
             >
               {record.name}
