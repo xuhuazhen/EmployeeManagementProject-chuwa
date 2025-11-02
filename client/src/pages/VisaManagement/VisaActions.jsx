@@ -98,7 +98,7 @@ const VisaActionCell = ({ employee, mode }) => {
           ? employee.documents.map((doc) => (
               <Space key={doc._id}>
                 <Link type="link" onClick={() => openPreview(doc)}>
-                  {doc.title}
+                  {doc.tag}
                 </Link>
                 <DownloadOutlined
                   onClick={() => handleDownload(doc.url, doc.title)}
@@ -126,7 +126,7 @@ const VisaActionCell = ({ employee, mode }) => {
           key={doc._id}
           onClick={() => openPreview(doc)}
         >
-          {doc.title}
+          {'View ' + doc.tag.toUpperCase()}
         </AppButton>
       ))}
 
