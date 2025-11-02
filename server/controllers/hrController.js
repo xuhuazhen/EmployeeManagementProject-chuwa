@@ -156,7 +156,7 @@ export const get_employees = catchAsync(async (req, res) => {
 // Approve / Reject documen
 export const updateDocumentStatus = catchAsync(async (req, res) => {
   const { docId } = req.params;
-  const { status, feedback } = req.body;
+  const { userId, status, feedback } = req.body;
 
   //Update the document itself
   const doc = await Document.findByIdAndUpdate(
@@ -174,8 +174,8 @@ export const updateDocumentStatus = catchAsync(async (req, res) => {
   console.log("Doc Status is updated");
 
   //Find which user this document belongs to
-  const user = await User.findOne({ documents: docId });
-
+  const user = await User.findById(userId);
+  console.log('updated user-doc:', user);
   if (user) {
     let newNextStep = user.nextStep;
 

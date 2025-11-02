@@ -51,9 +51,9 @@ export const fetchVisaEmployees = createAsyncThunk(
 // Approve/reject document
 export const updateDocumentStatus = createAsyncThunk(
   "hrEmployees/updateDocumentStatus",
-  async ({ docId, status, feedback }, { rejectWithValue }) => {
+  async ({ userId, docId, status, feedback }, { rejectWithValue }) => {
     try {
-      const res = await updateDocumentStatusAPI({ docId, status, feedback });
+      const res = await updateDocumentStatusAPI({ userId, docId, status, feedback });
       return res; // { doc, nextStep }
     } catch (error) {
       return rejectWithValue(
