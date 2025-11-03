@@ -8,8 +8,9 @@ export const fetchAllEmployeesAPI = async (params = {}) => {
   return res.data.data;
 };
 
-export const updateDocumentStatusAPI = async ({ docId, status, feedback }) => {
+export const updateDocumentStatusAPI = async ({ userId, docId, status, feedback }) => {
   const res = await axios.patch(`${BASE_URL}/documents/${docId}`, {
+    userId,
     status,
     feedback,
   });

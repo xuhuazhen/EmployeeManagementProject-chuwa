@@ -3,6 +3,7 @@ import { AppError } from '../utils/appError.js';
 import catchAsync from '../utils/catchAsync.js';
 import path from 'path';
 import fs from 'fs';
+import mongoose from 'mongoose';
 
 const getUserKey = (req) => req.headers['x-demo-userid'] || 'user-0001';
 
@@ -51,11 +52,12 @@ export const post_Avatar = catchAsync(async (req, res, next) => {
   const docs = await Document.find({ _id: { $in: user.documents } }); 
   // 查找头像文档
   let doc = docs.find(d => d.tag === 'profile-picture');
-  console.log('FOUND DOC:', doc);
+
   if (doc) {
     doc.url = url;
     doc.title = req.file.originalname,
     doc.status = 'pending';
+    console.log('update ole avatar:', doc);
     await doc.save();
   } else {
     doc = await Document.create({
@@ -64,6 +66,7 @@ export const post_Avatar = catchAsync(async (req, res, next) => {
       tag: 'profile-picture',
       status: 'pending',
     });
+    console.log('create new avatar:', doc._id);
     user.documents.push(doc._id);
   }
 
@@ -78,7 +81,7 @@ export const post_document = catchAsync(async (req, res, next) => {
   // 兼容 query.label / body.tag 两种写法
   const raw = req.query.label || req.body.tag;
   const tag = normalizeLabel(raw);
-  console.log(raw, req.body.tag)
+  
   if (!tag) return next(new AppError(`Invalid label: ${raw}`, 400));
 
   const user = await User.findById(req.user.userId);
@@ -101,14 +104,22 @@ export const post_document = catchAsync(async (req, res, next) => {
     status: 'pending',
   });
 
+  console.log(user, tag, newDocument)
   user.documents.push(newDocument._id);
 
   // 提交这三类文档时，推进流程
   if (['ead', 'i20', 'i983'].includes(tag)) {
     user.nextStep = `${tag}-pending`;
   }
+  
+  try {
+    await user.save();
+  } catch (err) {
+    console.error('🔥 user.save() failed:', err);
+    return next(new AppError(`Failed to save user: ${err.message}`, 500));
+  }
 
-  await user.save();
+  console.log('After save:', JSON.stringify(user, null, 2));
 
   res.status(201).json({
     status: 'success',
