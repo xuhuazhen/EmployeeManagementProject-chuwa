@@ -22,7 +22,7 @@ export default function DocumentsCard({ form }) {
       dataSource={docs}
       renderItem={(doc) => (
         <List.Item key={doc._id}>
-          <Card size="small" title={doc.title}>
+          <Card size="small" title={doc.tag.toUpperCase() + ' File: ' + doc.title}>
             <Space>
               <Button
                 type="link"

@@ -5,7 +5,6 @@ import catchAsync from '../utils/catchAsync.js';
 import { SignupToken } from '../models/SignupToken.js';
 import jwt from 'jsonwebtoken'; 
 
-
 export const get_signup = (req, res, next) => {
   const signupToken = req.params.signupToken;
 
@@ -88,6 +87,7 @@ export const get_logout = catchAsync(async (req, res, next) => {
   res.status(200).json({ status: 'success' });
 });
 
+// user/login
 export const get_login = async (req, res, next) => {
   res.set('Cache-Control', 'no-store');
   if (req.cookies.token) {

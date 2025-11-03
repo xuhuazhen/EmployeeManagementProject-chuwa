@@ -48,11 +48,12 @@ export const post_sendEmail = catchAsync(async (req, res, next) => {
   }
 });
 
+// hr/history
 export const get_tokenHistory = getAll(SignupToken);
 
 export const post_sendNotificationEmail = catchAsync(async (req, res, next) => {
   const userId = req.params.userId;
-
+  console.log('sent to' , userId)
   //TODO: check email exist
 
   const user = await User.findById(userId)
@@ -67,7 +68,7 @@ export const post_sendNotificationEmail = catchAsync(async (req, res, next) => {
   const status = user.nextStep.split("-")[1];
 
   const fileMapping = {
-    ead: "Application",
+    ead: "OPT Document",
     i983: "EAD Document",
     i20: "I-983 Document",
   };
@@ -162,7 +163,7 @@ export const get_employees = catchAsync(async (req, res) => {
 // Approve / Reject documen
 export const updateDocumentStatus = catchAsync(async (req, res) => {
   const { docId } = req.params;
-  const { status, feedback } = req.body;
+  const { userId, status, feedback } = req.body;
 
   //Update the document itself
   const doc = await Document.findByIdAndUpdate(
@@ -180,8 +181,8 @@ export const updateDocumentStatus = catchAsync(async (req, res) => {
   console.log("Doc Status is updated");
 
   //Find which user this document belongs to
-  const user = await User.findOne({ documents: docId });
-
+  const user = await User.findById(userId);
+  console.log('updated user-doc:', user);
   if (user) {
     let newNextStep = user.nextStep;
 

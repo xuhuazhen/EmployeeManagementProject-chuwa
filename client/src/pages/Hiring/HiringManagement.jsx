@@ -18,6 +18,7 @@ const HiringManagement = () => {
   const [activeTab, setActiveTab] = useState("email history");
   const [previewDoc, setPreviewDoc] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [history, setHistory] = useState([]);
   const navigate = useNavigate();
 
   const { Title, Text } = Typography;
@@ -28,6 +29,11 @@ const HiringManagement = () => {
         setLoading(true);
         const res = await axios.get("http://localhost:3000/api/hr/profiles");
         const profiles = res.data.data.map(formatProfile);
+
+        const getHistory = await api.get('/hr/history');
+        console.log(getHistory.data)
+        setHistory(getHistory.data.data);
+
         setProfiles(profiles);
       } catch (err) {
         console.error("Error fetching profiles:", err);
@@ -107,14 +113,15 @@ const HiringManagement = () => {
 
   const filteredProfiles =
     activeTab === "email history"
-      ? profiles
-          .filter((p) => p.nextStep !== "all-done") //in progress
-          .map((p) => ({
-            ...p,
-            //only keep documents pending approval
-            documents:
-              p.documents?.filter((doc) => doc.status === "pending") || [],
-          }))
+      ? history
+      // ? profiles
+      //     .filter((p) => p.nextStep !== "all-done") //in progress
+      //     .map((p) => ({
+      //       ...p,
+      //       //only keep documents pending approval
+      //       documents:
+      //         p.documents?.filter((doc) => doc.status === "pending") || [],
+      //     }))
       : profiles
           .filter((p) => p.employment?.isF1 !== false) //exclude not F1
           .map((p) => ({
@@ -123,100 +130,133 @@ const HiringManagement = () => {
               p.documents?.filter((doc) => doc.status === "approved") || [],
           }));
 
-  const columns = [
-    {
-      title: "Name",
-      dataIndex: ["name"],
-      key: "name",
-      render: (_, record) => (
-        <a
-          onClick={() => navigate(`/hr/profiles/${record._id}`)}
-          style={{ color: "#1677ff", cursor: "pointer" }}
-        >
-          {record.name}
-        </a>
-      ),
-    },
-    {
-      title: "Title",
-      dataIndex: ["employment", "visaTitle"],
-      key: "visaTitle",
-    },
-    {
-      title: "Start Date",
-      dataIndex: ["employment", "startDate"],
-      key: "startDate",
-      render: (date) => (date ? dayjs(date).format("MMM D, YYYY") : "—"),
-    },
-    {
-      title: "End Date",
-      dataIndex: ["employment", "endDate"],
-      key: "endDate",
-      render: (date) => (date ? dayjs(date).format("MMM D, YYYY") : "—"),
-    },
-    {
-      title: "Remaining",
-      dataIndex: ["employment", "endDate"],
-      key: "endDate",
-      render: (date) => {
-        if (!date) return "—";
-        const daysLeft = dayjs(date).diff(dayjs(), "day");
-        if (daysLeft < 0) return <span style={{ color: "red" }}>Expired</span>;
-        if (daysLeft < 30)
-          return <span style={{ color: "orange" }}>{daysLeft} days</span>;
-        return <span style={{ color: "green" }}>{daysLeft} days</span>;
-      },
-    },
-    {
-      title: "Next Step",
-      dataIndex: ["nextStep"],
-      key: "nextStep",
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record) => (
-        <Space size="middle">
-          {record.documents?.map((doc) => (
-            <AppButton
-              size="small"
-              className={styles.buttonView}
-              key={doc._id}
-              onClick={() => openPreview(doc)}
+  const columns = 
+    activeTab !== "email history" ? 
+      [
+        {
+          title: "Name",
+          dataIndex: ["name"],
+          key: "name",
+          render: (_, record) => (
+            <a
+              onClick={() => navigate(`/hr/application/${record._id}`)}
+              style={{ color: "#1677ff", cursor: "pointer" }}
             >
-              View
-            </AppButton>
-          ))}
-          <AppButton size="small" className={styles.buttonSend}>
-            Send Notification
-          </AppButton>
-        </Space>
-      ),
-    },
-    // {
-    //   title: "Action",
-    //   key: "action",
-    //   render: (_, record) => (
-    //     <Space size="middle">
-    //       {record.documents?.length > 0 ? ( //Pending documents
-    //         record.documents.map((doc) => (
-    //           <a
-    //             key={doc._id}
-    //             href={doc.url}
-    //             target="_blank"
-    //             rel="noopener noreferrer"
-    //           >
-    //             {doc.title}
-    //           </a>
-    //         ))
-    //       ) : (
-    //         <span>N/A</span>
-    //       )}
-    //       <a>Send notification</a>
-    //     </Space>
-    //   ),
-    // },
-  ];
+              {record.name}
+            </a>
+          ),
+        },
+        {
+          title: "Title",
+          dataIndex: ["employment", "visaTitle"],
+          key: "visaTitle",
+        },
+        {
+          title: "Start Date",
+          dataIndex: ["employment", "startDate"],
+          key: "startDate",
+          render: (date) => (date ? dayjs(date).format("MMM D, YYYY") : "—"),
+        },
+        {
+          title: "End Date",
+          dataIndex: ["employment", "endDate"],
+          key: "endDate",
+          render: (date) => (date ? dayjs(date).format("MMM D, YYYY") : "—"),
+        },
+        {
+          title: "Remaining",
+          dataIndex: ["employment", "endDate"],
+          key: "endDate",
+          render: (date) => {
+            if (!date) return "—";
+            const daysLeft = dayjs(date).diff(dayjs(), "day");
+            if (daysLeft < 0) return <span style={{ color: "red" }}>Expired</span>;
+            if (daysLeft < 30)
+              return <span style={{ color: "orange" }}>{daysLeft} days</span>;
+            return <span style={{ color: "green" }}>{daysLeft} days</span>;
+          },
+        },
+        {
+          title: "Next Step",
+          dataIndex: ["nextStep"],
+          key: "nextStep",
+        },
+        {
+          title: "Action",
+          key: "action",
+          render: (_, record) => (
+            <Space size="middle">
+              {record.documents?.map((doc) => (
+                <AppButton
+                  size="small"
+                  className={styles.buttonView}
+                  key={doc._id}
+                  onClick={() => openPreview(doc)}
+                >
+                  View
+                </AppButton>
+              ))}
+              <AppButton size="small" className={styles.buttonSend}>
+                Send Notification
+              </AppButton>
+            </Space>
+          ),
+        },
+        // {
+        //   title: "Action",
+        //   key: "action",
+        //   render: (_, record) => (
+        //     <Space size="middle">
+        //       {record.documents?.length > 0 ? ( //Pending documents
+        //         record.documents.map((doc) => (
+        //           <a
+        //             key={doc._id}
+        //             href={doc.url}
+        //             target="_blank"
+        //             rel="noopener noreferrer"
+        //           >
+        //             {doc.title}
+        //           </a>
+        //         ))
+        //       ) : (
+        //         <span>N/A</span>
+        //       )}
+        //       <a>Send notification</a>
+        //     </Space>
+        //   ),
+        // },
+      ]
+    :
+      [
+        {
+          title: "Name",
+          dataIndex: ["personName"],
+          key: "name" 
+        },
+        {
+          title: "Email",
+          dataIndex: ["email"],
+          key: "email",
+        },
+        {
+          title: "Registrion Link",
+          dataIndex: ["link"],
+          key: "link",
+          render: (link) =>
+            link ? (
+              <a href={link} target="_blank" rel="noopener noreferrer">
+                {link.length > 30 ? link.slice(0, 30) + "..." : link}
+              </a>
+            ) : (
+              "—"
+            ),
+        },
+        {
+          title: "Status",
+          dataIndex: ["status"],
+          key: "status",  
+        }, 
+      ];
 
   const items = [
     {

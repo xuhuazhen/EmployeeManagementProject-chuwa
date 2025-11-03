@@ -10,6 +10,7 @@ import AppButton from "../../components/Button/AppButton";
 import { DownloadOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import styles from "./VisaManagement.module.css";
+import DownloadButton from "../../components/Button/DownloadButton/DownloadButton";
 
 const VisaActionCell = ({ employee, mode }) => {
   const dispatch = useDispatch();
@@ -45,6 +46,7 @@ const VisaActionCell = ({ employee, mode }) => {
     try {
       await dispatch(
         updateDocumentStatus({
+          userId: employee._id,
           docId: doc._id,
           status: "approved",
           feedback: "",
@@ -62,6 +64,7 @@ const VisaActionCell = ({ employee, mode }) => {
     try {
       await dispatch(
         updateDocumentStatus({
+          userId: employee._id,
           docId: doc._id,
           status: "rejected",
           feedback,
@@ -109,10 +112,11 @@ const VisaActionCell = ({ employee, mode }) => {
                   {doc.tag}
                   {/* {doc.title} */}
                 </Link>
-                <DownloadOutlined
+                {/* <DownloadOutlined
                   onClick={() => handleDownload(doc.url, doc.title)}
                   style={{ cursor: "pointer" }}
-                />
+                /> */}
+                <DownloadButton url={doc.url} />
               </Space>
             ))
           : "N/A"}
@@ -135,21 +139,22 @@ const VisaActionCell = ({ employee, mode }) => {
           key={doc._id}
           onClick={() => openPreview(doc)}
         >
-          {doc.tag}
-          {/* {doc.title} */}
+          {'View ' + doc.tag.toUpperCase()}
         </AppButton>
       ))}
-      {employee.nextStep?.split("-")[0] !== "application" &&
-        (employee.nextStep?.includes("waiting") ||
-          employee.nextStep?.includes("reject")) && (
-          <AppButton
-            className={styles.buttonSend}
-            onClick={handleSendNotification}
-            disabled={notificationSent}
-          >
-            {notificationSent ? "Notification Sent" : "Send Notification"}
-          </AppButton>
-        )}
+
+      {/* Send notification if next step requires submission */}
+      {( employee.nextStep?.split("-")[0] !== "application"
+        && (employee.nextStep?.includes("waiting") || employee.nextStep?.includes("reject")))
+         && (
+        <AppButton
+          className={styles.buttonSend}
+          onClick={handleSendNotification}
+          disabled={notificationSent}
+        >
+          {notificationSent ? "Notification Sent" : "Send Notification"}
+        </AppButton>
+      )}
       <DocumentReviewModal
         visible={isModalVisible}
         document={previewDoc}

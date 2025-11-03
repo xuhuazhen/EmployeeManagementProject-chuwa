@@ -62,7 +62,7 @@ const hrEmployeesSlice = createSlice({
       })
       .addCase(fetchInProgressEmployees.fulfilled, (state, action) => {
         state.loading = false;
-        state.inProgress = action.payload;
+        state.inProgress = action.payload.filter(e => e.nextStep !== "application-waiting");
       })
       .addCase(fetchInProgressEmployees.rejected, (state, action) => {
         state.loading = false;

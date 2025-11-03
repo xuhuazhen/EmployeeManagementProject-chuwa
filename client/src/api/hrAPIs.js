@@ -15,11 +15,13 @@ export const updateDocumentStatusAPI = async ({ docId, status, feedback }) => {
   });
   return res.data.data;
 };
-export const sendNotificationAPI = async ({ employeeId, message }) => {
-  const res = await axios.post(`${BASE_URL}/send-notification`, {
-    employeeId,
-    message,
-  });
+
+export const sendNotificationAPI = async ({ employeeId }) => {
+  console.log(employeeId);
+  const res = await axios.post(`${BASE_URL}/notify/${employeeId}`,
+    {}, 
+    { withCredentials: true } // 这是配置项
+  );
   return res.data.data;
 };
 

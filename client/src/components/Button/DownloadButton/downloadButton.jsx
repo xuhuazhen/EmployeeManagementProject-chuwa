@@ -13,6 +13,7 @@ const DownloadButton = ({ url, children }) => {
 
   return (
     <Button
+      style={{backgroundColor: "#4472CA"}}
       type="primary"
       icon={<DownloadOutlined />}
       onClick={handleDownload}

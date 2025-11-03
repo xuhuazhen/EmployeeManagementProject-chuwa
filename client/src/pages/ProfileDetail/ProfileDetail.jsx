@@ -1,78 +1,93 @@
 import React, { useState, useEffect } from "react";
-import { Form, Button, Card, message, Modal, Space  } from "antd";
-import dayjs from 'dayjs';
-import { useParams } from "react-router-dom";
-import { AddressCard } from "../components/Profiles/AddressCard"; 
-import { BasicInfoCard } from "../components/Profiles/BasicInfoCard";
-import { ContactInfoCard } from "../components/Profiles/ContactInfoCard";
-import { EmploymentCard } from "../components/Profiles/EmploymentCard"; 
-import ReferenceCard from "../components/Profiles/ReferenceCard";
-import DocumentsCard from "../components/Profiles/DocumentsCard"; 
+import { Form, Button, Card, message, Modal, Space, Divider } from "antd";
+import { useLocation, useParams } from "react-router-dom";
+import { AddressCard } from "../../components/Profiles/AddressCard"; 
+import { BasicInfoCard } from "../../components/Profiles/BasicInfoCard";
+import { ContactInfoCard } from "../../components/Profiles/ContactInfoCard";
+import { EmploymentCard } from "../../components/Profiles/EmploymentCard"; 
+import ReferenceCard from "../../components/Profiles/ReferenceCard";
+import DocumentsCard from "../../components/Profiles/DocumentsCard"; 
 
-import api from "../api/axiosConfig";
+import api from "../../api/axiosConfig";
 import { useDispatch, useSelector } from "react-redux";
-import EmergencyContactList from "../components/Profiles/EmergencyContactList";
-import LoadingSpin from "../components/LoadingSpin/loadingSpin";
-import MainLayout from "../components/mainLayout/mainLayout";
-import { mapProfileToFormData } from "../utils/mapProfileToFormData";
-import { storeInfo } from "../slices/employeeSlice";
-import { uploadAvatar } from "../api/onboardingApi";
+import EmergencyContactList from "../../components/Profiles/EmergencyContactList";
+import LoadingSpin from "../../components/LoadingSpin/loadingSpin";
+import MainLayout from "../../components/mainLayout/mainLayout";
+import { mapProfileToFormData } from "../../utils/mapProfileToFormData";
+import { storeInfo } from "../../slices/employeeSlice";
+import { uploadAvatar } from "../../api/onboardingApi"; 
+
+import styles from './profileDetail.module.css';
+
 export default function ProfileDetailPage({ mode }) {
   // mode: "hr" | "employee"
   const [form] = Form.useForm();
-  const [editing, setEditing] = useState(false); // employee 默认可编辑
+  const [editing, setEditing] = useState(false); // employee 默认可编辑. hr根据当前申请人状态判断是否可以approve/reject
   const [loading, setLoading] = useState(mode === "hr"); // hr 初始需要 fetch
   const [userData, setUserData] = useState(null);
   const [file, setFile] = useState(null);
+  const [title, setTitle] = useState('');
+
   const user =  useSelector(state => state.auth);
   const e =  useSelector(state => state.employee);
   const dispatch = useDispatch();
+  const location = useLocation();
 
-    // mode: "hr"获取数据
-    const { id } = useParams();
-    useEffect (() => {
-        console.log('CURRENT MODE:', mode)
-        if (mode === "hr" && id) {
-        setLoading(true);
-        api.get(`/user/profile/${id}`)
-            .then((res) => {
-            dispatch(storeInfo(res.data.data)); //store current picked userinfo
-            const formData = mapProfileToFormData(res.data.data);
-            setUserData(formData);
-            form.setFieldsValue(formData);
-            })
-            .finally(() => setLoading(false));
-        }  
-    }, [id]);
+  // mode: "hr"获取数据
+  const { id } = useParams();
+  useEffect (() => {
+    if (mode === "hr" && id) {
+      setLoading(true);
+
+      setTitle(location.pathname.includes("/application") ? 'Application Review' : 'Employee Profile');
+
+      api.get(`/user/profile/${id}`)
+        .then((res) => {
+          dispatch(storeInfo(res.data.data)); //store current picked userinfo
+          //判断这个目前emplouyee的申请状态
+          if (res.data.data.nextStep.split("-")[1] === 'pending') setEditing(true);
+          console.log(editing);
+          const formData = mapProfileToFormData(res.data.data);
+          setUserData(formData);
+
+          form.setFieldsValue(formData);
+        })
+        .finally(() => setLoading(false));
+    }  
+  }, [id, location.pathname]);
 
   // mode: "employee"获取数据
   useEffect(() => {
     if (mode === "employee") {
       // employee 使用 store 的数据  
+      setTitle('My Profile');
       const formData = mapProfileToFormData(e.employee);
     
       setUserData(formData);
       form.setFieldsValue(formData);
     }
-    }, [e]);
+  }, [e]);
 
   const handleSave  = async () => {
     try {
         const values = await form.validateFields(); 
 
-        // 提取头像文件
+        // // 提取头像文件
         const avatarPromise = file
           ? uploadAvatar(file).then(res => {
-              file.url = res.data.url; // 更新 URL
+            console.log(res)
+              file.url = res.data.url; // 更新URL
             })
           : Promise.resolve(); 
 
         //update form
-        const patchPromise = await api.patch(`/user/profile/${user.userID}`, values);
-            
-        
+        delete values.documents;
+        const patchPromise = api.patch(`/user/profile/${user.userID}`, { data : values });
+      
         const [patchRes] = await Promise.all([patchPromise, avatarPromise]);
+        
         dispatch(storeInfo(patchRes.data.data)); //store current picked userinfo 
+
         message.success("Profile saved successfully!");
         setEditing(false);
     } catch (err) {
@@ -97,13 +112,23 @@ export default function ProfileDetailPage({ mode }) {
     });
     };
 
+  const handleApprove = () => {
+    console.log('approve');
+  }
+
+  const handleReject = () => {
+    console.log('reject 打开feedback');
+  }
+
   if (loading || !userData) return <LoadingSpin />
 
   return (
     <MainLayout>
-        <h2 style={{marginBottom: '30px', marginLeft: '30px'}}> {mode !== "hr" ? "My Profile" : "Employee Profile Detail"} </h2>
+        <h2 style={{marginBottom: '30px', marginLeft: '30px'}}> {title} </h2>
         <Card style={{ maxWidth: 980, margin: "0 auto", padding: 16 }}>
-        <Form form={form} layout="vertical">
+        <Form form={form} layout="vertical" 
+            className={mode === "hr" || !editing ? styles.readonlyInput : ""}
+        >
             <BasicInfoCard mainForm={form} setFile={setFile} readOnly={mode === "hr" || !editing} />
             <AddressCard form={form} readOnly={mode === "hr" || !editing} />
             <ContactInfoCard form={form} readOnly={mode === "hr" || !editing} />
@@ -131,6 +156,22 @@ export default function ProfileDetailPage({ mode }) {
                 )}
             </Space>
             )}
+            
+            {mode === "hr" && location.pathname.includes("/application") && editing && (
+              <>
+                <Divider orientation="left"> </Divider>
+
+                <Space style={{ marginTop: 16 }}> 
+                    <Button type="primary" onClick={handleApprove}>
+                      Approve
+                    </Button>
+                    <Button type="primary" onClick={handleReject}>
+                      Reject
+                    </Button>  
+                </Space>
+              </>
+            )}
+            
         </Form>
         </Card>
     </MainLayout>

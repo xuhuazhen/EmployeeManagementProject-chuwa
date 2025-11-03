@@ -51,9 +51,9 @@ export const fetchVisaEmployees = createAsyncThunk(
 // Approve/reject document
 export const updateDocumentStatus = createAsyncThunk(
   "hrEmployees/updateDocumentStatus",
-  async ({ docId, status, feedback }, { rejectWithValue }) => {
+  async ({ userId, docId, status, feedback }, { rejectWithValue }) => {
     try {
-      const res = await updateDocumentStatusAPI({ docId, status, feedback });
+      const res = await updateDocumentStatusAPI({ userId, docId, status, feedback });
       return res; // { doc, nextStep }
     } catch (error) {
       return rejectWithValue(
@@ -65,8 +65,8 @@ export const updateDocumentStatus = createAsyncThunk(
 export const sendNotification = createAsyncThunk(
   "employees/sendNotification",
   async (employeeId, { rejectWithValue }) => {
-    try {
-      return await sendNotificationAPI(employeeId);
+    try { 
+      return await sendNotificationAPI({employeeId});
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }

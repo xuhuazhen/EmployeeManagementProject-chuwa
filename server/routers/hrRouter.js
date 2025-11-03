@@ -4,7 +4,9 @@ import {
   post_sendEmail,
   updateDocumentStatus,
   post_sendNotificationEmail,
+  get_tokenHistory,
 } from "../controllers/hrController.js";
+import { authValidation } from "../middleware/userMiddleware.js";
 
 const router = express.Router();
 
@@ -13,6 +15,7 @@ const router = express.Router();
 router.route("/signup").post(post_sendEmail);
 router.route("/profiles").get(get_employees);
 router.route("/documents/:docId").patch(updateDocumentStatus);
-router.route("/:userId/notify").post(post_sendNotificationEmail);
+router.route("/notify/:userId").post(authValidation, post_sendNotificationEmail);
+router.get('/history', authValidation, get_tokenHistory);
 
 export default router;
