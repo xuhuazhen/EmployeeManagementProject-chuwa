@@ -2,7 +2,6 @@ import express from "express";
 import {
   get_employees,
   post_sendEmail,
-  // getInProgressEmployees,
   updateDocumentStatus,
   post_sendNotificationEmail,
   get_tokenHistory,
@@ -15,7 +14,6 @@ const router = express.Router();
 
 router.route("/signup").post(post_sendEmail);
 router.route("/profiles").get(get_employees);
-// router.route("/in-progress").get(getInProgressEmployees);
 router.route("/documents/:docId").patch(updateDocumentStatus);
 router.route("/notify/:userId").post(authValidation, post_sendNotificationEmail);
 router.get('/history', authValidation, get_tokenHistory);

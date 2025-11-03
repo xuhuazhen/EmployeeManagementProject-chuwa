@@ -18,9 +18,17 @@ const VisaActionCell = ({ employee, mode }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [notificationSent, setNotificationSent] = useState(false);
 
-  // Pending documents for approval
-  const pendingDocs =
-    employee.documents?.filter((doc) => doc.status === "pending" && doc.tag === employee.nextStep.split("-")[0]) || [];
+  //Filtering the documents
+  const documentsToShow =
+    mode === "in-progress"
+      ? employee.documents?.filter(
+          (doc) =>
+            doc.status === "pending" &&
+            doc.tag !== "profile-picture" &&
+            doc.tag !== "driver-license" &&
+            employee.nextStep?.includes("pending")
+        )
+      : employee.documents?.filter((doc) => doc.tag !== "profile-picture");
 
   // Open document modal
   const openPreview = (doc) => {
@@ -98,10 +106,11 @@ const VisaActionCell = ({ employee, mode }) => {
     return (
       <Space direction="vertical">
         {employee.documents?.length
-          ? employee.documents.map((doc) => (
+          ? documentsToShow.map((doc) => (
               <Space key={doc._id}>
                 <Link type="link" onClick={() => openPreview(doc)}>
                   {doc.tag}
+                  {/* {doc.title} */}
                 </Link>
                 {/* <DownloadOutlined
                   onClick={() => handleDownload(doc.url, doc.title)}
@@ -124,7 +133,7 @@ const VisaActionCell = ({ employee, mode }) => {
   return (
     <Space direction="horizontal">
       {/* Pending documents */}
-      {pendingDocs.map((doc) => (
+      {documentsToShow.map((doc) => (
         <AppButton
           className={styles.buttonView}
           key={doc._id}
