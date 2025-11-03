@@ -21,11 +21,11 @@ export const get_Onboarding = async (req, res, next) => {
 
 // POST /api/onboarding/me
 export const save_Onboarding = async (req, res, next) => {
-  try {
-    const key = getUserKey(req);
+  try { 
+    console.log('SAVE ONBOARD', req.body);
 
     // 确保用户存在（如果你已用 seed 脚本，就一定能找到）
-    let user = await User.findOne({ username: key });
+    let user = await User.findById(req.body.userId);
     if (!user) {
       user = await User.create({
         username: key,
@@ -42,7 +42,7 @@ export const save_Onboarding = async (req, res, next) => {
       employment = {},
       reference = {},
       emergencyContact = [],
-    } = req.body || {};
+    } = req.body.formValue || {};
 
     // 写入嵌套对象（与模型字段一致）
     user.personalInfo = {

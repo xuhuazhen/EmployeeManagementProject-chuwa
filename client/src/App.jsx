@@ -2,7 +2,7 @@ import React from 'react';
 import OnboardingApplication from './pages/OnboardingApplication';
 
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import MainLayout from "./components/mainLayout/mainLayout";
+import { Navigate } from "react-router-dom";
 import { AuthGuardForSignup } from './router/AuthGuard';
 import SignupPage from './pages/Signup';
 import LoginPage from './pages/Login'; 
@@ -15,14 +15,13 @@ import VisaStatusPage from "./pages/VisaStatus";
 import ProfileDetailPage from "./pages/ProfileDetail/ProfileDetail";
 import ErrorPage from "./pages/ErrorPage"
 import Profiles from './pages/Profiles/Profiles';
+import OnboardingApplicationUI from './components/Onboarding/OnboardingApplicationUI';
 
 export default function App() {
   return (
     <Router>
       <Routes>
-        {/* <Route path="/" element={<Navigate to="/onboarding" replace />} /> */}
-        {/* <Route path="/onboarding" element={<OnboardingApplication />} /> */}
-        {/* 之后加入publicroute */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={
           <Protected>
             <LoginPage />
@@ -52,7 +51,8 @@ export default function App() {
         <Route path="/onboarding" 
           element={
             <Protected route="employee">
-              <OnboardingApplication />
+              <OnboardingApplicationUI />
+              {/* <OnboardingApplication /> */}
             </Protected>
           } 
         />

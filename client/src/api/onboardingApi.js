@@ -5,6 +5,7 @@ import api from "./axiosConfig";
 export const uploadAvatar = (file) => {
   const fd = new FormData();
   fd.append("file", file);
+  console.log(file)
   return api.post("/file/upload/avatar", fd, {
     headers: { "Content-Type": "multipart/form-data" },
   });
@@ -13,8 +14,9 @@ export const uploadAvatar = (file) => {
 export const uploadDocument = (file, label) => {
   const fd = new FormData();
   fd.append("file", file);
+  fd.append('tag', label);
   // 服务端按 query.label 识别文档类型（driver-license / opt-receipt / ead / i-983 / i-20）
-  return api.post(`/file/upload?label=${encodeURIComponent(label)}`, fd, {
+  return api.post('/file/upload', fd, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 };
