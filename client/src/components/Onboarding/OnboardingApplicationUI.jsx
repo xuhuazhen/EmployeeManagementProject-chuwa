@@ -281,6 +281,12 @@ const OnboardingApplicationUI = () => {
     try {
       const formValue = await form.validateFields();
 
+      if (formValue.employment?.visaTitle === 'F1') {
+        formValue.employment.isF1 = true;
+      } else {
+        formValue.employment.isF1 = false;
+      }
+
       const documents = form.getFieldValue("documents") || []; 
     
         // 判断 driver-license 是否存在
@@ -313,7 +319,7 @@ const OnboardingApplicationUI = () => {
         const res = await api.post("/onboarding/me", {userId: employee._id , formValue});
         console.log(res)
         dispatch(storeInfo(res.data));
-        dispatch(updateStep(res.nextStep));
+        dispatch(updateStep(res.data.nextStep));
         setEditing(false); 
         message.success("Application submitted");
     } catch (err){
