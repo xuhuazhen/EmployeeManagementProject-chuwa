@@ -31,6 +31,7 @@ export const BasicInfoCard = ({ mainForm, setFile, readOnly = false }) => {
         //console.log(docs)
         if (Array.isArray(docs) && docs.length > 0) {
             const profileDoc = docs.find((doc) => doc.tag === "profile-picture");
+            console.log(profileDoc)
             if (profileDoc?.url) {
                 setPreview(profileDoc.url);
         }
@@ -46,6 +47,7 @@ export const BasicInfoCard = ({ mainForm, setFile, readOnly = false }) => {
             ...currentDocs.filter((d) => d.tag !== "profile-picture"),
             { tag: "profile-picture", url: URL.createObjectURL(file), file },
         ];
+        console.log(updatedDocs);
         mainForm.setFieldsValue({ documents: updatedDocs });
         setFile(file);
         setPreview(URL.createObjectURL(file));

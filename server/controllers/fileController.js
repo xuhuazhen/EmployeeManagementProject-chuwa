@@ -111,13 +111,8 @@ export const post_document = catchAsync(async (req, res, next) => {
   if (['ead', 'i20', 'i983'].includes(tag)) {
     user.nextStep = `${tag}-pending`;
   }
-  
-  try {
-    await user.save();
-  } catch (err) {
-    console.error('🔥 user.save() failed:', err);
-    return next(new AppError(`Failed to save user: ${err.message}`, 500));
-  }
+ 
+  await user.save(); 
 
   console.log('After save:', JSON.stringify(user, null, 2));
 
