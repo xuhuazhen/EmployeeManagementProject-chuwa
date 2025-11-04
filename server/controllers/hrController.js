@@ -247,14 +247,20 @@ export const put_application = catchAsync(async (req, res, next) => {
       new AppError('No application found, User has not submit application', 404)
     );
   }
-
+  
   let newApplicationStatus = req.body.action.toLowerCase();
 
   let newNextStep = nextStep;
 
   switch (newApplicationStatus) {
     case 'approved':
-      if (user.employment.isF1) {
+      const profileDoc = user.documents.find((doc) => doc.tag === 'profile-picture');
+      if (profileDoc) {
+        profileDoc.status = 'approved';
+        await profileDoc.save(); // 更新 Document 模型里的那条记录
+      }
+
+      if (user.employment.isF1 || user.employment.visaTitle === 'F1'  ) {
         newNextStep = 'ead-waiting';
       } else {
         newNextStep = 'all-done';
@@ -275,6 +281,7 @@ export const put_application = catchAsync(async (req, res, next) => {
     status: newApplicationStatus,
     feedback: req.body.feedback,
   };
+
   user.nextStep = newNextStep;
 
   await user.save();
