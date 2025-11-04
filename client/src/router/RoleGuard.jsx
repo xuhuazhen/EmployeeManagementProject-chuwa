@@ -23,11 +23,11 @@ const RoleGuard = ({ allowedRole, children }) => {
             navigate('/onboarding');
           break;
         default:
-          if (['/login', '/'].includes(location.pathname)) {
+          if (['/login', '/', '/onboarding'].includes(location.pathname)) {
             navigate('/home');
           }
           break;
-      }
+      } 
     }
 
     // HR的默认跳转逻辑

@@ -251,10 +251,11 @@ export const put_application = catchAsync(async (req, res, next) => {
   let newApplicationStatus = req.body.action.toLowerCase();
 
   let newNextStep = nextStep;
+  
+  const profileDoc = user.documents.find((doc) => doc.tag === 'opt-receipt');
 
   switch (newApplicationStatus) {
     case 'approved':
-      const profileDoc = user.documents.find((doc) => doc.tag === 'profile-picture');
       if (profileDoc) {
         profileDoc.status = 'approved';
         await profileDoc.save(); // 更新 Document 模型里的那条记录
@@ -268,6 +269,10 @@ export const put_application = catchAsync(async (req, res, next) => {
  
       break;
     case 'rejected':
+      if (profileDoc) {
+        profileDoc.status = 'rejected';
+        await profileDoc.save(); // 更新 Document 模型里的那条记录
+      }
       newNextStep = 'application-reject'; 
       break;
     default:

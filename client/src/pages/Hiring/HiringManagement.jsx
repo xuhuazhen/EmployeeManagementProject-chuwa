@@ -115,14 +115,6 @@ const HiringManagement = () => {
   const filteredProfiles =
     activeTab === "email history"
       ? history
-      // ? profiles
-      //     .filter((p) => p.nextStep !== "all-done") //in progress
-      //     .map((p) => ({
-      //       ...p,
-      //       //only keep documents pending approval
-      //       documents:
-      //         p.documents?.filter((doc) => doc.status === "pending") || [],
-      //     }))
       : profiles
           .filter((p) => p.application?.status === onboardingTab) //data should match tab key
 
