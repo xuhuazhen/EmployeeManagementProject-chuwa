@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Button, Card, message, Modal, Space, Divider } from "antd";
+import { Form, Button, Card, message, Modal, Space, Divider, Input } from "antd";
 import { useLocation, useParams } from "react-router-dom";
 import { AddressCard } from "../../components/Profiles/AddressCard"; 
 import { BasicInfoCard } from "../../components/Profiles/BasicInfoCard";
@@ -14,10 +14,11 @@ import EmergencyContactList from "../../components/Profiles/EmergencyContactList
 import LoadingSpin from "../../components/LoadingSpin/loadingSpin";
 import MainLayout from "../../components/mainLayout/mainLayout";
 import { mapProfileToFormData } from "../../utils/mapProfileToFormData";
-import { storeInfo } from "../../slices/employeeSlice";
+import { storeInfo, updateInfo } from "../../slices/employeeSlice";
 import { uploadAvatar } from "../../api/onboardingApi"; 
 
 import styles from './profileDetail.module.css';
+import AppButton from "../../components/Button/AppButton";
 
 export default function ProfileDetailPage({ mode }) {
   // mode: "hr" | "employee"
@@ -26,7 +27,9 @@ export default function ProfileDetailPage({ mode }) {
   const [loading, setLoading] = useState(mode === "hr"); // hr 初始需要 fetch
   const [userData, setUserData] = useState(null);
   const [file, setFile] = useState(null);
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState(''); 
+  const [feedbackVisible, setFeedbackVisible] = useState(false);  // 控制反馈弹窗
+  const [feedback, setFeedback] = useState("");          
 
   const user =  useSelector(state => state.auth);
   const e =  useSelector(state => state.employee);
@@ -35,18 +38,31 @@ export default function ProfileDetailPage({ mode }) {
 
   // mode: "hr"获取数据
   const { id } = useParams();
+
   useEffect (() => {
     if (mode === "hr" && id) {
-      setLoading(true);
+      setLoading(true); 
 
-      setTitle(location.pathname.includes("/application") ? 'Application Review' : 'Employee Profile');
+      setTitle(location.pathname.includes("/application") 
+        ? 
+        'Application Review'
+        : 
+        'Employee Profile'
+      );
 
+      
       api.get(`/user/profile/${id}`)
         .then((res) => {
-          dispatch(storeInfo(res.data.data)); //store current picked userinfo
-          //判断这个目前emplouyee的申请状态
-          if (res.data.data.nextStep.split("-")[1] === 'pending') setEditing(true);
-          console.log(editing);
+          dispatch(storeInfo(res.data.data)); //store current picked userinfo 
+          
+          if (res.data.data.application?.status === location.state?.status) {
+              setTitle(`Application Review (${location.state?.status})`)
+            //  from hiring management page
+            if (location.state?.status === "pending") {
+              setEditing(true);
+            }
+          }
+
           const formData = mapProfileToFormData(res.data.data);
           setUserData(formData);
 
@@ -54,7 +70,7 @@ export default function ProfileDetailPage({ mode }) {
         })
         .finally(() => setLoading(false));
     }  
-  }, [id, location.pathname]);
+  }, [id, location]);
 
   // mode: "employee"获取数据
   useEffect(() => {
@@ -113,12 +129,53 @@ export default function ProfileDetailPage({ mode }) {
     };
 
   const handleApprove = () => {
-    console.log('approve');
+    Modal.confirm({
+      title: "Approve this application?",
+      content: "Once approved, the applicant will be notified and changes can no longer be made.",
+      okText: "Approve",
+      cancelText: "Cancel",
+      onOk: async () => {
+        try {
+          const res = await api.put(`/hr/application/${id}`, { action: "approved" });
+          dispatch(updateInfo(res.data.data));
+
+          setEditing(false); 
+          message.success("Application approved!"); 
+        } catch {
+          message.error("Failed to approve application");
+        }
+      },
+    });
   }
 
   const handleReject = () => {
     console.log('reject 打开feedback');
+    setFeedback("");
+    setFeedbackVisible(true);
   }
+
+  const handleSubmitFeedback = async () => {
+    if (!feedback.trim()) {
+      message.warning("Please provide feedback before submitting.");
+      return;
+    }
+
+    try {
+      const res = await api.put(`/hr/application/${id}`, {
+        action: "rejected",
+        feedback,
+      });
+      
+      dispatch(updateInfo(res.data.data));
+
+      message.success("Application rejected!");
+      setFeedbackVisible(false); 
+      setEditing(false); 
+    } catch(err) {
+      console.log(err);
+      message.error("Failed to reject application");
+    }
+  };
 
   if (loading || !userData) return <LoadingSpin />
 
@@ -160,18 +217,29 @@ export default function ProfileDetailPage({ mode }) {
             {mode === "hr" && location.pathname.includes("/application") && editing && (
               <>
                 <Divider orientation="left"> </Divider>
-
                 <Space style={{ marginTop: 16 }}> 
-                    <Button type="primary" onClick={handleApprove}>
-                      Approve
-                    </Button>
-                    <Button type="primary" onClick={handleReject}>
-                      Reject
-                    </Button>  
+                  <AppButton onClick={handleApprove}>Approve</AppButton> 
+                  <AppButton onClick={handleReject}>Reject</AppButton>  
                 </Space>
               </>
             )}
-            
+
+            <Modal
+              title="Reject Application"
+              open={feedbackVisible}
+              onOk={handleSubmitFeedback}
+              onCancel={() => setFeedbackVisible(false)}
+              okText="Submit"
+            >
+              <p>Please provide feedback for this rejection:</p>
+              <Input.TextArea
+                rows={4}
+                value={feedback}
+                onChange={(e) => setFeedback(e.target.value)}
+                placeholder="Enter feedback for the applicant..."
+              />
+            </Modal>
+
         </Form>
         </Card>
     </MainLayout>

@@ -224,3 +224,66 @@ export const updateDocumentStatus = catchAsync(async (req, res) => {
     data: { doc, nextStep: user?.nextStep },
   });
 });
+
+// /hr/application
+export const put_application = catchAsync(async (req, res, next) => { 
+  const userId = req.params.id; 
+
+  if (!req.body.action) {
+    return next(new AppError('Invalid request, missing action', 400));
+  }
+
+  const user = await User.findById(userId);
+
+  if (!user) {
+    return next(new AppError('No user found for the given user ID', 404));
+  }
+
+  const nextStep = user.nextStep;
+
+  console.log(nextStep)
+  if (nextStep === 'application-waiting') {
+    return next(
+      new AppError('No application found, User has not submit application', 404)
+    );
+  }
+
+  let newApplicationStatus = req.body.action.toLowerCase();
+
+  let newNextStep = nextStep;
+
+  switch (newApplicationStatus) {
+    case 'approved':
+      if (user.employment.isF1) {
+        newNextStep = 'ead-waiting';
+      } else {
+        newNextStep = 'all-done';
+      }
+ 
+      break;
+    case 'rejected':
+      newNextStep = 'application-reject'; 
+      break;
+    default:
+      return new AppError(
+        'invalid action, action can be only reject or approve',
+        400
+      );
+  }
+
+  user.application = {
+    status: newApplicationStatus,
+    feedback: req.body.feedback,
+  };
+  user.nextStep = newNextStep;
+
+  await user.save();
+
+  res.status(201).json({
+    status: 'success',
+    data: {
+      nextStep: newNextStep,
+      applicationStatus: newApplicationStatus
+    }
+  });
+});
