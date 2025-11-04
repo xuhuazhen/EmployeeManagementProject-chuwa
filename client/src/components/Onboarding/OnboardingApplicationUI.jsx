@@ -263,7 +263,7 @@ const OnboardingApplicationUI = () => {
   const { status } = useMemo(() => {
     const { status } = parseNextStep(auth?.nextStep || "application-waiting");
     return { status };
-  }, [auth?.nextStep]);
+  }, [auth]);
   
   const [hasReference, setHasReference] = useState(false);
   const [avatar, setAvatar] = useState(null);
@@ -314,7 +314,7 @@ const OnboardingApplicationUI = () => {
         dispatch(storeInfo(res.data));
         dispatch(updateStep(res.nextStep));
         setEditing(false); 
-      message.success("Validation passed (UI-only). Files are stored in form state.");
+        message.success("Application submitted");
     } catch {
       /* antd 自带错误提示 */
       message.error("Validation FAILED");
@@ -324,7 +324,7 @@ const OnboardingApplicationUI = () => {
   const handleCancelUIOnly = () => {
     form.resetFields();
     setEditing(false);
-    message.info("Changes discarded (UI-only).");
+    message.info("Changes discarded.");
   }
    
 
@@ -347,7 +347,7 @@ const OnboardingApplicationUI = () => {
       <h2 style={{ margin: "0 0 20px 16px" }}>{statusTitle(status)}</h2>
 
       <Card style={{ maxWidth: 980, margin: "0 auto", padding: 16 }}>
-        <TopBanner status={status} feedback={employee?.feedback} />
+        <TopBanner status={status} feedback={employee.application?.feedback} />
 
         <Form form={form} layout="vertical" >
           <BasicInfoCard setFile={setAvatar} mainForm={form} readOnly={readOnly} />
