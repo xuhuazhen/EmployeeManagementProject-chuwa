@@ -20,6 +20,7 @@ const HiringManagement = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [history, setHistory] = useState([]);
   const navigate = useNavigate();
+  const [onboardingTab, setOnboardingTab] = useState("pending"); // 判断applicaiton status
 
   const { Title, Text } = Typography;
 
@@ -27,7 +28,7 @@ const HiringManagement = () => {
     const fetchProfiles = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("http://localhost:3000/api/hr/profiles");
+        const res = await axios.get("http://localhost:3000/api/hr/profiles", {withCredentials: true});
         const profiles = res.data.data.map(formatProfile);
 
         const getHistory = await api.get('/hr/history');
@@ -123,12 +124,7 @@ const HiringManagement = () => {
       //         p.documents?.filter((doc) => doc.status === "pending") || [],
       //     }))
       : profiles
-          .filter((p) => p.employment?.isF1 !== false) //exclude not F1
-          .map((p) => ({
-            ...p,
-            documents:
-              p.documents?.filter((doc) => doc.status === "approved") || [],
-          }));
+          .filter((p) => p.application?.status === onboardingTab) //data should match tab key
 
   const columns = 
     activeTab !== "email history" ? 
@@ -137,14 +133,6 @@ const HiringManagement = () => {
           title: "Name",
           dataIndex: ["name"],
           key: "name",
-          render: (_, record) => (
-            <a
-              onClick={() => navigate(`/hr/application/${record._id}`)}
-              style={{ color: "#1677ff", cursor: "pointer" }}
-            >
-              {record.name}
-            </a>
-          ),
         },
         {
           title: "Title",
@@ -178,53 +166,55 @@ const HiringManagement = () => {
         },
         {
           title: "Next Step",
-          dataIndex: ["nextStep"],
+          dataIndex: "nextStep",
           key: "nextStep",
+          render: (nextStep) => {
+            switch (nextStep) {
+              case "application-pending":
+                return "Need HR approval";
+              case "application-reject":
+                return "Waiting for employee to resubmit";
+              case "ead-waiting":
+                return "Waiting for employee to submit EAD";
+              case "ead-pending":
+                return "Need HR approval of EAD";
+              case "ead-reject":
+                return "Waiting for employee to resubmit EAD";
+              case "i20-waiting":
+                return "Waiting for employee to submit I-20";
+              case "i20-pending":
+                return "Need HR approval of I-20";
+              case "i20-reject":
+                return "Waiting for employee to resubmit I-20";
+              case "i983-waiting":
+                return "Waiting for employee to submit I-983";
+              case "i983-pending":
+                return "Need HR approval of I-983";
+              case "i983-reject":
+                return "Waiting for employee to resubmit I-983";
+              case "all-done":
+                return "All steps completed";
+              default:
+                return nextStep || "—";
+            }
+          },
         },
         {
           title: "Action",
-          key: "action",
-          render: (_, record) => (
-            <Space size="middle">
-              {record.documents?.map((doc) => (
-                <AppButton
-                  size="small"
-                  className={styles.buttonView}
-                  key={doc._id}
-                  onClick={() => openPreview(doc)}
-                >
-                  View
-                </AppButton>
-              ))}
-              <AppButton size="small" className={styles.buttonSend}>
-                Send Notification
-              </AppButton>
-            </Space>
+          key: "action", 
+          render: (_, record) => ( 
+            <AppButton
+              size="small"
+              className={styles.buttonView}
+              key={record._id}
+              onClick={() => navigate(`/hr/application/${record._id}`,
+                { state: { status: onboardingTab} }
+              )}
+            >
+              View Application
+            </AppButton>  
           ),
         },
-        // {
-        //   title: "Action",
-        //   key: "action",
-        //   render: (_, record) => (
-        //     <Space size="middle">
-        //       {record.documents?.length > 0 ? ( //Pending documents
-        //         record.documents.map((doc) => (
-        //           <a
-        //             key={doc._id}
-        //             href={doc.url}
-        //             target="_blank"
-        //             rel="noopener noreferrer"
-        //           >
-        //             {doc.title}
-        //           </a>
-        //         ))
-        //       ) : (
-        //         <span>N/A</span>
-        //       )}
-        //       <a>Send notification</a>
-        //     </Space>
-        //   ),
-        // },
       ]
     :
       [
@@ -335,6 +325,19 @@ const HiringManagement = () => {
         </Flex>
         {activeTab === "email history" && (
           <RegistrantionToken handleClick={handleClick} />
+        )}
+
+        {activeTab === "onboarding" && (
+          <Tabs
+            className={styles.subTabs}
+            activeKey={onboardingTab}
+            onChange={setOnboardingTab}
+            items={[
+              { key: "pending", label: "Pending" },
+              { key: "rejected", label: "Rejected" },
+              { key: "approved", label: "Approved" },
+            ]}
+          />
         )}
         <AppTable columns={columns} data={filteredProfiles} loading={loading} />
       </Flex>

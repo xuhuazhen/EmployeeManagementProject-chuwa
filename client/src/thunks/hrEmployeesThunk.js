@@ -25,6 +25,7 @@ export const fetchInProgressEmployees = createAsyncThunk(
   async (params = {}, { rejectWithValue }) => {
     try {
       const data = await fetchAllEmployeesAPI({
+        visa: "F1",
         inProgressIncomplete: true,
         params,
       });
